@@ -43,13 +43,13 @@ function parseScale(scale: number): string | undefined {
     case 40:
       return '4';
     case 45:
-      return '5弱';
+      return '5 weak';
     case 50:
-      return '5強';
+      return '5 strong';
     case 55:
-      return '6弱';
+      return '6 weak';
     case 60:
-      return '6強';
+      return '6 strong';
     case 70:
       return '7';
     default:
