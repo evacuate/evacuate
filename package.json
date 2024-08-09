@@ -1,22 +1,22 @@
 {
-  "name": "evacuate",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/evacuate/evacuate.git"
-  },
-  "keywords": [
-    "evacuate"
-  ],
-  "author": "evacuate",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/evacuate/evacuate/issues"
-  },
-  "homepage": "https://github.com/evacuate/evacuate#readme",
-  "description": ""
+	"name": "evacuate",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"sort": "node ./scripts/sort.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/evacuate/evacuate.git"
+	},
+	"keywords": [
+		"evacuate"
+	],
+	"author": "evacuate",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/evacuate/evacuate/issues"
+	},
+	"homepage": "https://github.com/evacuate/evacuate#readme",
+	"description": ""
 }
