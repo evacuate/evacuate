@@ -119,6 +119,7 @@ async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
       const message = `${time} ${earthQuakeInfo}\nMaximum Seismic Intensity ${parsedScale}\n\n${points}`;
       agent.post({
         text: message,
+        langs: ['en', 'ja'],
       });
     }
   }
