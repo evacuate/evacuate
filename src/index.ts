@@ -60,17 +60,17 @@ function parseScale(scale: number): string | undefined {
 function parseCode(code: number): string | undefined {
   switch (code) {
     case 551:
-      return '地震情報';
+      return 'Earthquake Information';
     case 552:
-      return '津波情報';
+      return 'Tsunami Information';
     case 554:
-      return '緊急地震速報 発表検出';
+      return 'Earthquake Early Warning Detected';
     case 556:
-      return '緊急地震速報（警報）';
+      return 'Earthquake Early Warning (Alert)';
     case 561:
-      return '地震感知情報';
+      return 'Earthquake Detection Information';
     case 9611:
-      return '地震感知情報 解析結果';
+      return 'Earthquake Detection Analysis Results';
     default:
       return undefined;
   }
@@ -89,7 +89,7 @@ function parsePoints(points: Point[]): string {
     if (!prevPref.includes(pref)) {
       prevPref.push(pref);
       const scale = parseScale(point.scale);
-      pointsInfo.push(`${pref} 震度${scale}`);
+      pointsInfo.push(`${pref} Seismic Intensity ${scale}`);
     }
   }
   return pointsInfo.join('\n');
@@ -108,7 +108,7 @@ function onMessage(_ws: WebSocket, message: WebSocket.Data) {
 
     if (parsedScale !== undefined) {
       agent.post({
-        text: `${time} ${earthQuakeInfo}\n最大震度${parsedScale}\n\n${points}`,
+        text: `${time} ${earthQuakeInfo}\nMaximum Seismic Intensity ${parsedScale}\n\n${points}`,
       });
     }
   }
