@@ -1,4 +1,5 @@
 import { BskyAgent } from '@atproto/api';
+import translate from './translate';
 import WebSocket from 'ws';
 import env from './env';
 
@@ -103,7 +104,7 @@ function parsePoints(points: Point[]): string {
   return pointsInfo.join('\n');
 }
 
-function onMessage(_ws: WebSocket, message: WebSocket.Data) {
+async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
   const earthQuakeData = JSON.parse(message.toString());
   const code = earthQuakeData.code;
   if (code === 551) {
@@ -115,9 +116,17 @@ function onMessage(_ws: WebSocket, message: WebSocket.Data) {
     const parsedScale = parseScale(maxScale);
 
     if (parsedScale !== undefined) {
-      agent.post({
-        text: `${time} ${earthQuakeInfo}\nMaximum Seismic Intensity ${parsedScale}\n\n${points}`,
-      });
+      const message = `${time} ${earthQuakeInfo}\nMaximum Seismic Intensity ${parsedScale}\n\n${points}`;
+      const translatedMessage = await translate(message, 'EN');
+
+      if (translatedMessage !== undefined) {
+        // Post the translated message to the Bsky API
+        agent.post({
+          text: translatedMessage,
+        });
+      } else {
+        console.error('Failed to translate the message');
+      }
     }
   }
 }
