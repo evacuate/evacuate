@@ -91,7 +91,7 @@ function parsePoints(points: Point[]): string {
       if (!scaleMap[scale]) {
         scaleMap[scale] = [];
       }
-      scaleMap[scale].push(pref);
+      scaleMap[scale].push(translate(pref));
     }
   }
 
@@ -117,16 +117,9 @@ async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
 
     if (parsedScale !== undefined) {
       const message = `${time} ${earthQuakeInfo}\nMaximum Seismic Intensity ${parsedScale}\n\n${points}`;
-      const translatedMessage = await translate(message, 'EN');
-
-      if (translatedMessage !== undefined) {
-        // Post the translated message to the Bsky API
-        agent.post({
-          text: translatedMessage,
-        });
-      } else {
-        console.error('Failed to translate the message');
-      }
+      agent.post({
+        text: message,
+      });
     }
   }
 }

@@ -48,7 +48,6 @@
   },
   "dependencies": {
     "@atproto/api": "^0.12.29",
-    "deepl": "^1.0.13",
     "ws": "^8.18.0"
   }
 }
