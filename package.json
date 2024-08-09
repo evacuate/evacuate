@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.1.0",
+    "@types/ws": "^8.5.12",
     "@typescript-eslint/eslint-plugin": "^8.0.1",
     "@typescript-eslint/parser": "^8.0.1",
     "esbuild": "^0.23.0",
@@ -43,5 +44,9 @@
   },
   "engines": {
     "yarn": "Please use npm instead of yarn"
+  },
+  "dependencies": {
+    "@atproto/api": "^0.12.29",
+    "ws": "^8.18.0"
   }
 }
