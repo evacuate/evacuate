@@ -21,3 +21,4 @@ jobs:
           git_remote_url: ssh://dokku@${{ secrets.DOKKU_HOST }}:22/${{ secrets.DOKKU_APP_NAME }}
           ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
           branch: 'main'
+          git_push_flags: --force
