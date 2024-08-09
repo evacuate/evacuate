@@ -1,21 +1,24 @@
-name: Deploy to Dokku
+name: Deploy Production
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   deploy:
+    name: Deploy Production
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Cloning repo
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: Push to dokku
-        uses: dokku/github-action@master
+        uses: dokku/github-action@v1.4.0
         with:
           git_remote_url: dokku@${{ secrets.DOKKU_HOST }}:${{ secrets.DOKKU_APP_NAME }}
-          ssh_private_key: ${{ secrets.GITHUB_PRIVATE_KEY }}
+          ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
+          branch: 'main'
+          git_push_flags: '--force'
