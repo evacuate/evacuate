@@ -49,6 +49,6 @@
     "typescript": "^5.5.4"
   },
   "engines": {
-    "yarn": "Please use npm instead of yarn"
+    "node": ">=20.0.0"
   }
 }
