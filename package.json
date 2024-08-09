@@ -18,5 +18,8 @@
 		"url": "https://github.com/evacuate/evacuate/issues"
 	},
 	"homepage": "https://github.com/evacuate/evacuate#readme",
-	"description": ""
+	"description": "",
+	"devDependencies": {
+		"typescript": "^5.5.4"
+	}
 }
