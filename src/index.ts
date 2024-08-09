@@ -1,7 +1,8 @@
-import { BskyAgent } from '@atproto/api';
+import { BskyAgent, RichText } from '@atproto/api';
 import translate from './translate';
 import WebSocket from 'ws';
 import env from './env';
+import console from 'console';
 
 const EMAIL: string = env.EMAIL;
 const PASSWORD: string = env.PASSWORD!;
@@ -116,9 +117,14 @@ async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
     const parsedScale = parseScale(maxScale);
 
     if (parsedScale !== undefined) {
-      const message = `${time} ${earthQuakeInfo}\nMaximum Seismic Intensity ${parsedScale}\n\n${points}`;
+      const message = `${time} ${earthQuakeInfo}\nMaximum Seismic Intensity ${parsedScale}\n\n${points}\n#evacuate`;
+
+      const rt = new RichText({ text: message });
+      await rt.detectFacets(agent);
+
       agent.post({
-        text: message,
+        text: rt.text,
+        facets: rt.facets,
         langs: ['en', 'ja'],
       });
     }
