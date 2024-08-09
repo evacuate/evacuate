@@ -125,14 +125,14 @@ async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
   }
 }
 
-function onError(_ws: WebSocket, error: Error) {
+function onError(_ws: WebSocket, error: Error): void {
   console.error(error);
 }
 
-function onClose(_ws: WebSocket, code: number, reason: Buffer) {
+function onClose(_ws: WebSocket, code: number, reason: Buffer): void {
   console.log('### closed ###', code, reason);
 }
 
-function onOpen(_ws: WebSocket) {
+function onOpen(_ws: WebSocket): void {
   console.log('Opened connection');
 }
