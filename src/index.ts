@@ -1,8 +1,9 @@
 import { BskyAgent } from '@atproto/api';
 import WebSocket from 'ws';
+import env from './env';
 
-const EMAIL: string = process.env.EMAIL!;
-const PASSWORD: string = process.env.PASSWORD!;
+const EMAIL: string = env.EMAIL;
+const PASSWORD: string = env.PASSWORD!;
 
 const agent = new BskyAgent({
   service: 'https://bsky.social', // Not a .app domain
