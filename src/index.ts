@@ -122,11 +122,19 @@ async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
       const rt = new RichText({ text: message });
       await rt.detectFacets(agent);
 
-      agent.post({
-        text: rt.text,
-        facets: rt.facets,
-        langs: ['en', 'ja'],
-      });
+      // Post to bsky.social
+      agent
+        .post({
+          text: rt.text,
+          facets: rt.facets,
+          langs: ['en', 'ja'],
+        })
+        .then(() => {
+          console.log('Transmission has been completed!');
+        })
+        .catch((error) => {
+          console.error('Failed to post:', error);
+        });
     }
   }
 }
