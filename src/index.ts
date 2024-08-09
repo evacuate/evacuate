@@ -1,7 +1,7 @@
 import { BskyAgent } from '@atproto/api';
 import WebSocket from 'ws';
 
-const USER_NAME: string = process.env.USER_NAME!;
+const USERNAME: string = process.env.USERNAME!;
 const PASSWORD: string = process.env.PASSWORD!;
 
 const agent = new BskyAgent({
@@ -10,7 +10,7 @@ const agent = new BskyAgent({
 
 async () => {
   await agent.login({
-    identifier: USER_NAME, // Username
+    identifier: USERNAME, // Username
     password: PASSWORD, // Password
   });
 };
