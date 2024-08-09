@@ -1,25 +1,47 @@
 {
-	"name": "evacuate",
-	"version": "1.0.0",
-	"main": "index.js",
-	"scripts": {
-		"sort": "node ./scripts/sort.js"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/evacuate/evacuate.git"
-	},
-	"keywords": [
-		"evacuate"
-	],
-	"author": "evacuate",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/evacuate/evacuate/issues"
-	},
-	"homepage": "https://github.com/evacuate/evacuate#readme",
-	"description": "",
-	"devDependencies": {
-		"typescript": "^5.5.4"
-	}
+  "name": "evacuate",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [
+    "evacuate"
+  ],
+  "homepage": "https://github.com/evacuate/evacuate#readme",
+  "bugs": {
+    "url": "https://github.com/evacuate/evacuate/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/evacuate/evacuate.git"
+  },
+  "license": "MIT",
+  "author": "evacuate",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "build": "node ./scripts/rm.js dist && node scripts/build.js",
+    "dev": "tsx src/index.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check 'src/**/*.ts'",
+    "format:write": "prettier --write 'src/**/*.ts'",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "sort": "node ./scripts/sort.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.1",
+    "@typescript-eslint/parser": "^8.0.1",
+    "esbuild": "^0.23.0",
+    "eslint-config-love": "^62.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^17.10.2",
+    "eslint-plugin-promise": "^7.1.0",
+    "prettier": "^3.3.3",
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.4"
+  },
+  "engines": {
+    "yarn": "Please use npm instead of yarn"
+  }
 }
