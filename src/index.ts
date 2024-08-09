@@ -1,19 +1,35 @@
 import { BskyAgent } from '@atproto/api';
 import WebSocket from 'ws';
 
-const USERNAME: string = process.env.USERNAME!;
+const EMAIL: string = process.env.EMAIL!;
 const PASSWORD: string = process.env.PASSWORD!;
 
 const agent = new BskyAgent({
   service: 'https://bsky.social', // Not a .app domain
 });
 
-async () => {
-  await agent.login({
-    identifier: USERNAME, // Username
-    password: PASSWORD, // Password
-  });
-};
+(async () => {
+  try {
+    await agent.login({
+      identifier: EMAIL, // Email
+      password: PASSWORD, // Password
+    });
+
+    // Check if logged in
+    if (agent.session !== undefined) {
+      console.log('Logged in');
+    }
+
+    const ws = new WebSocket('wss://api.p2pquake.net/v2/ws');
+
+    ws.on('open', onOpen);
+    ws.on('message', (message) => onMessage(ws, message));
+    ws.on('error', (error) => onError(ws, error));
+    ws.on('close', (code, reason) => onClose(ws, code, reason));
+  } catch (error) {
+    console.error('Failed to log in or establish WebSocket connection:', error);
+  }
+})();
 
 function parseScale(scale: number): string | undefined {
   switch (scale) {
@@ -101,17 +117,10 @@ function onError(_ws: WebSocket, error: Error) {
   console.error(error);
 }
 
-function onClose(_ws: WebSocket, code: number, reason: string) {
+function onClose(_ws: WebSocket, code: number, reason: Buffer) {
   console.log('### closed ###', code, reason);
 }
 
 function onOpen(_ws: WebSocket) {
   console.log('Opened connection');
 }
-
-const ws = new WebSocket('wss://api.p2pquake.net/v2/ws');
-
-ws.on('open', onOpen);
-ws.on('message', onMessage);
-ws.on('error', onError);
-ws.on('close', onClose);
