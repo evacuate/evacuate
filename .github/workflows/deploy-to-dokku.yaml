@@ -1,0 +1,25 @@
+name: Deploy to Dokku
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Dokku
+        run: |
+          git remote add dokku ssh://dokku@${{ secrets.DOKKU_HOST }}:22/${{ secrets.DOKKU_APP_NAME }}
+          git push dokku main
