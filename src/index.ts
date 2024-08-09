@@ -82,16 +82,24 @@ interface Point {
 }
 
 function parsePoints(points: Point[]): string {
-  const pointsInfo: string[] = [];
-  const prevPref: string[] = [];
+  const scaleMap: { [key: string]: string[] } = {};
   for (const point of points) {
     const pref = point.pref;
-    if (!prevPref.includes(pref)) {
-      prevPref.push(pref);
-      const scale = parseScale(point.scale);
-      pointsInfo.push(`${pref} Seismic Intensity ${scale}`);
+    const scale = parseScale(point.scale);
+    if (scale !== undefined) {
+      if (!scaleMap[scale]) {
+        scaleMap[scale] = [];
+      }
+      scaleMap[scale].push(pref);
     }
   }
+
+  const pointsInfo: string[] = [];
+  for (const scale in scaleMap) {
+    const regions = scaleMap[scale].join(', ');
+    pointsInfo.push(`[Seismic Intensity ${scale}] ${regions}`);
+  }
+
   return pointsInfo.join('\n');
 }
 
