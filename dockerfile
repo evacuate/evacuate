@@ -8,13 +8,13 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install app dependencies
-RUN npm install
+RUN yarn install
 
 # Copy the rest of the application code to the container
 COPY . .
 
 # Building the app
-RUN npm run build
+RUN yarn build
 
 # Start the app
-CMD ["npm", "start"]
+CMD ["yarn", "start"]
