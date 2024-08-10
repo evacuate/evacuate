@@ -1,8 +1,11 @@
 import { BskyAgent, RichText } from '@atproto/api';
-import translate from './translate';
 import WebSocket from 'ws';
 import env from './env';
-import console from 'console';
+
+// Import Helper Functions
+import parsePoints from './helpers/parsePoints';
+import parseScale from './helpers/parseScale';
+import parseCode from './helpers/parseCode';
 
 const EMAIL: string = env.EMAIL;
 const PASSWORD: string = env.PASSWORD!;
@@ -33,77 +36,6 @@ const agent = new BskyAgent({
     console.error('Failed to log in or establish WebSocket connection:', error);
   }
 })();
-
-function parseScale(scale: number): string | undefined {
-  switch (scale) {
-    case 10:
-      return '1';
-    case 20:
-      return '2';
-    case 30:
-      return '3';
-    case 40:
-      return '4';
-    case 45:
-      return '5 weak';
-    case 50:
-      return '5 strong';
-    case 55:
-      return '6 weak';
-    case 60:
-      return '6 strong';
-    case 70:
-      return '7';
-    default:
-      return undefined;
-  }
-}
-
-function parseCode(code: number): string | undefined {
-  switch (code) {
-    case 551:
-      return 'Earthquake Information';
-    case 552:
-      return 'Tsunami Information';
-    case 554:
-      return 'Earthquake Early Warning Detected';
-    case 556:
-      return 'Earthquake Early Warning (Alert)';
-    case 561:
-      return 'Earthquake Detection Information';
-    case 9611:
-      return 'Earthquake Detection Analysis Results';
-    default:
-      return undefined;
-  }
-}
-
-interface Point {
-  pref: string;
-  scale: number;
-}
-
-function parsePoints(points: Point[]): string {
-  const scaleMap: { [key: string]: Set<string> } = {};
-  for (const point of points) {
-    const pref = point.pref;
-    const scale = parseScale(point.scale);
-    if (scale !== undefined) {
-      if (!scaleMap[scale]) {
-        scaleMap[scale] = new Set();
-      }
-      scaleMap[scale].add(translate(pref));
-    }
-  }
-
-  const pointsInfo: string[] = [];
-  for (const scale in scaleMap) {
-    const regions = Array.from(scaleMap[scale]).join(', ');
-    pointsInfo.push(`[Seismic Intensity ${scale}] ${regions}`);
-  }
-
-  return pointsInfo.join('\n');
-}
 
 async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
   const earthQuakeData = JSON.parse(message.toString());
