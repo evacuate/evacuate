@@ -7,8 +7,14 @@ import parsePoints from './helpers/parsePoints';
 import parseScale from './helpers/parseScale';
 import parseCode from './helpers/parseCode';
 
+// Import createMessage Function
+import createMessage from './helpers/createMessage';
+
 const EMAIL: string = env.EMAIL;
 const PASSWORD: string = env.PASSWORD!;
+const NODE_ENV: 'development' | 'production' = env.NODE_ENV || 'development';
+
+const isDev = NODE_ENV === 'development';
 
 const agent = new BskyAgent({
   service: 'https://bsky.social', // Not a .app domain
@@ -26,7 +32,12 @@ const agent = new BskyAgent({
       console.log('Logged in');
     }
 
-    const ws = new WebSocket('wss://api.p2pquake.net/v2/ws');
+    // Changing URLs in the development environment
+    const url = isDev
+      ? 'wss://api-realtime-sandbox.p2pquake.net/v2/ws'
+      : 'wss://api.p2pquake.net/v2/ws';
+
+    const ws = new WebSocket(url);
 
     ws.on('open', onOpen);
     ws.on('message', (message) => onMessage(ws, message));
@@ -41,17 +52,16 @@ async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
   const earthQuakeData = JSON.parse(message.toString());
   const code = earthQuakeData.code;
   if (code === 551) {
-    const earthQuakeInfo = parseCode(code);
+    const info = parseCode(code);
     const points = parsePoints(earthQuakeData.points);
     const earthQuake = earthQuakeData.earthquake;
     const time = earthQuake.time;
     const maxScale = earthQuake.maxScale;
-    const parsedScale = parseScale(maxScale);
+    const scale = parseScale(maxScale);
 
-    if (parsedScale !== undefined) {
-      const message = `${time} ${earthQuakeInfo}\nMaximum Seismic Intensity ${parsedScale}\n\n${points}\n#evacuate`;
-
-      const rt = new RichText({ text: message });
+    if (scale !== undefined) {
+      const text = createMessage(time, info, scale, points, isDev);
+      const rt = new RichText({ text });
       await rt.detectFacets(agent);
 
       // Post to bsky.social
