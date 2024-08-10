@@ -9,7 +9,7 @@ import parseCode from './helpers/parseCode';
 import parseArea from './helpers/parseArea';
 
 // Import Message Functions
-import { createMessage, createTsunamiMessage } from './helpers/message';
+import { createMessage, createTsunamiMessage } from './helpers/messageCreator';
 
 const EMAIL: string = env.EMAIL;
 const PASSWORD: string = env.PASSWORD!;

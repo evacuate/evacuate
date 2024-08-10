@@ -7,7 +7,10 @@ import parseCode from '../src/helpers/parseCode';
 import parseArea from '../src/helpers/parseArea';
 
 // Import Message Functions
-import { createMessage, createTsunamiMessage } from '../src/helpers/message';
+import {
+  createMessage,
+  createTsunamiMessage,
+} from '../src/helpers/messageCreator';
 
 const exampleData = {
   code: 551,
