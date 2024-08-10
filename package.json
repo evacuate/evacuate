@@ -27,6 +27,8 @@
     "lint:fix": "eslint src --ext .ts --fix",
     "sort": "node ./scripts/sort.js",
     "start": "node dist/index.js",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
