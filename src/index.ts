@@ -50,6 +50,12 @@ const agent = new BskyAgent({
 
 async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
   const earthQuakeData = JSON.parse(message.toString());
+
+  // Asynchronous processing
+  processMessage(earthQuakeData).catch(console.error);
+}
+
+async function processMessage(earthQuakeData: any): Promise<void> {
   const code = earthQuakeData.code;
   if (code === 551) {
     const info = parseCode(code);
@@ -64,19 +70,13 @@ async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
       const rt = new RichText({ text });
       await rt.detectFacets(agent);
 
-      // Post to bsky.social
-      agent
-        .post({
-          text: rt.text,
-          facets: rt.facets,
-          langs: ['en', 'ja'],
-        })
-        .then(() => {
-          console.log('Transmission has been completed!');
-        })
-        .catch((error) => {
-          console.error('Failed to post:', error);
-        });
+      await agent.post({
+        text: rt.text,
+        facets: rt.facets,
+        langs: ['en', 'ja'],
+      });
+
+      console.log('Transmission has been completed!');
     }
   }
 }
