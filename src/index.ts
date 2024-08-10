@@ -34,7 +34,7 @@ const agent = new BskyAgent({
   }
 })();
 
-function parseScale(scale: number): string {
+function parseScale(scale: number): string | undefined {
   switch (scale) {
     case 10:
       return '1';
@@ -55,7 +55,7 @@ function parseScale(scale: number): string {
     case 70:
       return '7';
     default:
-      return 'Unknown';
+      return undefined;
   }
 }
 
