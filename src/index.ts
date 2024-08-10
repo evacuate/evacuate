@@ -6,9 +6,10 @@ import env from './env';
 import parsePoints from './helpers/parsePoints';
 import parseScale from './helpers/parseScale';
 import parseCode from './helpers/parseCode';
+import parseArea from './helpers/parseArea';
 
-// Import createMessage Function
-import createMessage from './helpers/createMessage';
+// Import Message Functions
+import { createMessage, createTsunamiMessage } from './helpers/message';
 
 const EMAIL: string = env.EMAIL;
 const PASSWORD: string = env.PASSWORD!;
@@ -67,6 +68,25 @@ async function processMessage(earthQuakeData: any): Promise<void> {
 
     if (scale !== undefined) {
       const text = createMessage(time, info, scale, points, isDev);
+      const rt = new RichText({ text });
+      await rt.detectFacets(agent);
+
+      await agent.post({
+        text: rt.text,
+        facets: rt.facets,
+        langs: ['en', 'ja'],
+      });
+
+      console.log('Transmission has been completed!');
+    }
+  } else if (code === 552) {
+    const info = parseCode(code);
+    const area = parseArea(earthQuakeData.areas);
+    const areaResult: string = area.join(', ');
+    const time = earthQuakeData.time.replace(/\.\d+$/, '');
+
+    if (area.length > 0) {
+      const text = createTsunamiMessage(time, info, areaResult, isDev);
       const rt = new RichText({ text });
       await rt.detectFacets(agent);
 

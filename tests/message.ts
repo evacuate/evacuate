@@ -4,6 +4,10 @@ import { test } from 'vitest';
 import parsePoints from '../src/helpers/parsePoints';
 import parseScale from '../src/helpers/parseScale';
 import parseCode from '../src/helpers/parseCode';
+import parseArea from '../src/helpers/parseArea';
+
+// Import Message Functions
+import { createMessage, createTsunamiMessage } from '../src/helpers/message';
 
 const exampleData = {
   code: 551,
@@ -317,11 +321,124 @@ test('message', async ({ expect }) => {
   const parsedScale = parseScale(maxScale);
 
   if (parsedScale !== undefined) {
-    const message = `${time} ${earthQuakeInfo}\nMaximum Seismic Intensity ${parsedScale}\n\n${points}\n#evacuate`;
+    const message = createMessage(
+      time,
+      earthQuakeInfo,
+      parsedScale,
+      points,
+      false,
+    );
 
     // Expected Messages
     const expectedMessage = `2024/08/10 14:18:00 Earthquake Information\nMaximum Seismic Intensity 3\n\n[Seismic Intensity 1] Fukuoka, Nagasaki, Miyazaki\n[Seismic Intensity 3] Kumamoto\n#evacuate`;
 
     expect(message).toBe(expectedMessage);
   }
+});
+
+const exampleTsunamiData = {
+  areas: [
+    {
+      firstHeight: {
+        arrivalTime: '2024/08/08 17:10:00',
+      },
+      grade: 'Watch',
+      immediate: false,
+      maxHeight: {
+        description: '１ｍ',
+        value: 1,
+      },
+      name: '愛媛県宇和海沿岸',
+    },
+    {
+      firstHeight: {
+        condition: '津波到達中と推測',
+      },
+      grade: 'Watch',
+      immediate: true,
+      maxHeight: {
+        description: '１ｍ',
+        value: 1,
+      },
+      name: '高知県',
+    },
+    {
+      firstHeight: {
+        condition: '津波到達中と推測',
+      },
+      grade: 'Watch',
+      immediate: true,
+      maxHeight: {
+        description: '１ｍ',
+        value: 1,
+      },
+      name: '大分県豊後水道沿岸',
+    },
+    {
+      firstHeight: {
+        condition: '津波到達中と推測',
+      },
+      grade: 'Watch',
+      immediate: true,
+      maxHeight: {
+        description: '１ｍ',
+        value: 1,
+      },
+      name: '宮崎県',
+    },
+    {
+      firstHeight: {
+        condition: '津波到達中と推測',
+      },
+      grade: 'Watch',
+      immediate: true,
+      maxHeight: {
+        description: '１ｍ',
+        value: 1,
+      },
+      name: '鹿児島県東部',
+    },
+    {
+      firstHeight: {
+        arrivalTime: '2024/08/08 17:00:00',
+        condition: 'ただちに津波来襲と予測',
+      },
+      grade: 'Watch',
+      immediate: true,
+      maxHeight: {
+        description: '１ｍ',
+        value: 1,
+      },
+      name: '種子島・屋久島地方',
+    },
+  ],
+  cancelled: false,
+  code: 552,
+  id: '66b4792ad616be440743d393',
+  issue: {
+    source: '気象庁',
+    time: '2024/08/08 16:52:09',
+    type: 'Focus',
+  },
+  time: '2024/08/08 16:52:10.336',
+  timestamp: {
+    convert: '2024/08/08 16:52:10.332',
+    register: '2024/08/08 16:52:10.336',
+  },
+  user_agent: 'jmaxml-seis-parser-go, relay, register-api',
+  ver: '20231023',
+};
+
+test('tsunami message', async ({ expect }) => {
+  const info = parseCode(exampleTsunamiData.code);
+  const area = parseArea(exampleTsunamiData.areas);
+  const areaResult: string = area.join(', ');
+  const time = exampleTsunamiData.time.replace(/\.\d+$/, '');
+
+  const message = createTsunamiMessage(time, info, areaResult, false);
+
+  // Expected Messages
+  const expectedMessage = `2024/08/08 16:52:10 Tsunami Information\nThere is new information in the following areas\n\nEhime, Kochi, Oita, Miyazaki, Kagoshima\n#evacuate`;
+
+  expect(message).toBe(expectedMessage);
 });
