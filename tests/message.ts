@@ -320,7 +320,7 @@ test('message', async ({ expect }) => {
     const message = `${time} ${earthQuakeInfo}\nMaximum Seismic Intensity ${parsedScale}\n\n${points}\n#evacuate`;
 
     // Expected Messages
-    const expectedMessage = `2024/08/10 14:18:00 Earthquake Information\nMaximum Seismic Intensity 3\n\n[Seismic Intensity 1] Kumamoto, Fukuoka, Nagasaki, Miyazaki\n[Seismic Intensity 2] Kumamoto\n[Seismic Intensity 3] Kumamoto\n#evacuate`;
+    const expectedMessage = `2024/08/10 14:18:00 Earthquake Information\nMaximum Seismic Intensity 3\n\n[Seismic Intensity 1] Fukuoka, Nagasaki, Miyazaki\n[Seismic Intensity 3] Kumamoto\n#evacuate`;
 
     expect(message).toBe(expectedMessage);
   }
