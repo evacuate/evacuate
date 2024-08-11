@@ -31,6 +31,8 @@ const agent = new BskyAgent({
     // Check if logged in
     if (agent.session !== undefined) {
       console.log('Logged in');
+      // Check the environment
+      console.log(isDev ? 'Development environment' : 'Production environment');
     }
 
     // Changing URLs in the development environment
