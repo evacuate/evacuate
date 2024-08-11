@@ -60,7 +60,9 @@ async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
 
 async function processMessage(earthQuakeData: any): Promise<void> {
   const code = earthQuakeData.code;
+  console.log('Message received from server.');
   if (code === 551) {
+    console.log('The code is: ', code);
     const info = parseCode(code);
     const points = parsePoints(earthQuakeData.points);
     const earthQuake = earthQuakeData.earthquake;
@@ -82,6 +84,7 @@ async function processMessage(earthQuakeData: any): Promise<void> {
       console.log('Transmission has been completed!');
     }
   } else if (code === 552) {
+    console.log('The code is: ', code);
     const info = parseCode(code);
     const area = parseArea(earthQuakeData.areas);
     const areaResult: string = area.join(', ');
