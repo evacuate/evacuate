@@ -123,5 +123,5 @@ function onClose(_ws: WebSocket, code: number, reason: Buffer): void {
 }
 
 function onOpen(_ws: WebSocket): void {
-  if (isDev) console.log('WebSocket connection opened.');
+  console.log('WebSocket connection opened.');
 }
