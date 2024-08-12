@@ -7,8 +7,9 @@ interface Point {
 }
 
 export default function parsePoints(points: Point[]): string {
-  const highestScaleMap: { [key: string]: string } = {};
-  const finalPoints: Point[] = [];
+  // const highestScaleMap: { [key: string]: string } = {};
+  const highestScaleMap = new Map<string, string>();
+  const finalPoints = new Set<Point>();
 
   // Find the largest scale for each pref
   for (const point of points) {
@@ -16,8 +17,11 @@ export default function parsePoints(points: Point[]): string {
     const scale = parseScale(point.scale);
 
     if (scale !== undefined) {
-      if (!highestScaleMap[pref] || scale > highestScaleMap[pref]) {
-        highestScaleMap[pref] = scale;
+      if (
+        !highestScaleMap.has(pref) ||
+        scale > (highestScaleMap.get(pref) ?? -Infinity)
+      ) {
+        highestScaleMap.set(pref, scale);
       }
     }
   }
@@ -27,30 +31,30 @@ export default function parsePoints(points: Point[]): string {
     const pref = point.pref;
     const scale = parseScale(point.scale);
 
-    if (scale !== undefined && scale === highestScaleMap[pref]) {
-      finalPoints.push(point);
+    if (scale !== undefined && scale === highestScaleMap.get(pref)) {
+      finalPoints.add(point);
     }
   }
 
   // Group by scale
-  const scaleMap: { [key: string]: Set<string> } = {};
+  const scaleMap = new Map<string, Set<string>>();
   for (const point of finalPoints) {
     const pref = point.pref;
     const scale = parseScale(point.scale);
 
     if (scale !== undefined) {
-      if (!scaleMap[scale]) {
-        scaleMap[scale] = new Set();
+      if (!scaleMap.has(scale)) {
+        scaleMap.set(scale, new Set());
       }
-      scaleMap[scale].add(translate(pref));
+      scaleMap.get(scale)?.add(translate(pref));
     }
   }
 
   const pointsInfo: string[] = [];
-  for (const scale in scaleMap) {
-    const regions = Array.from(scaleMap[scale]).join(', ');
+  for (const [scale, regionsSet] of scaleMap.entries()) {
+    const regions = Array.from(regionsSet).join(', ');
     pointsInfo.push(`[Seismic Intensity ${scale}] ${regions}`);
   }
 
-  return pointsInfo.join('\n');
+  return pointsInfo.reverse().join('\n');
 }
