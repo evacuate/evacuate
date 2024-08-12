@@ -18,28 +18,25 @@ const NODE_ENV: 'development' | 'production' = env.NODE_ENV || 'development';
 const isDev = NODE_ENV === 'development';
 
 const agent = new BskyAgent({
-  service: 'https://bsky.social', // Not a .app domain
+  service: 'https://bsky.social',
 });
 
 (async () => {
   try {
     await agent.login({
-      identifier: EMAIL, // Email
-      password: PASSWORD, // Password
+      identifier: EMAIL,
+      password: PASSWORD,
     });
 
-    // Check if logged in
     if (agent.session !== undefined) {
-      console.log('Logged in');
-      // Check the environment
-      console.log(isDev ? 'Development environment' : 'Production environment');
+      console.log('Logged in successfully.');
     }
 
-    // Changing URLs in the development environment
     const url = isDev
       ? 'wss://api-realtime-sandbox.p2pquake.net/v2/ws'
       : 'wss://api.p2pquake.net/v2/ws';
 
+    console.log(`Now running in ${NODE_ENV} mode.`);
     const ws = new WebSocket(url);
 
     ws.on('open', onOpen);
@@ -47,11 +44,12 @@ const agent = new BskyAgent({
     ws.on('error', (error) => onError(ws, error));
     ws.on('close', (code, reason) => onClose(ws, code, reason));
   } catch (error) {
-    console.error('Failed to log in or establish WebSocket connection:', error);
+    console.error('Error during login or WebSocket initialization:', error);
   }
 })();
 
 async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
+  if (isDev) console.debug('Message received from server.');
   const earthQuakeData = JSON.parse(message.toString());
 
   // Asynchronous processing
@@ -60,9 +58,11 @@ async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
 
 async function processMessage(earthQuakeData: any): Promise<void> {
   const code = earthQuakeData.code;
-  console.log('Message received from server.');
+
+  // Output the status code to the log
+  console.log(`Received message with status code: ${code}`);
+
   if (code === 551) {
-    console.log('The code is: ', code);
     const info = parseCode(code);
     const points = parsePoints(earthQuakeData.points);
     const earthQuake = earthQuakeData.earthquake;
@@ -81,10 +81,11 @@ async function processMessage(earthQuakeData: any): Promise<void> {
         langs: ['en', 'ja'],
       });
 
-      console.log('Transmission has been completed!');
+      console.log('Earthquake alert received and posted successfully.');
+    } else {
+      console.warn('Earthquake scale is undefined.');
     }
   } else if (code === 552) {
-    console.log('The code is: ', code);
     const info = parseCode(code);
     const area = parseArea(earthQuakeData.areas);
     const areaResult: string = area.join(', ');
@@ -101,19 +102,26 @@ async function processMessage(earthQuakeData: any): Promise<void> {
         langs: ['en', 'ja'],
       });
 
-      console.log('Transmission has been completed!');
+      console.log('Tsunami alert received and posted successfully.');
+    } else {
+      console.warn('Tsunami area is undefined.');
     }
+  } else {
+    if (isDev) console.warn('Unknown message code:', code);
   }
 }
 
 function onError(_ws: WebSocket, error: Error): void {
-  console.error(error);
+  console.error('WebSocket encountered an error:', error);
 }
 
 function onClose(_ws: WebSocket, code: number, reason: Buffer): void {
-  console.log('### closed ###', code, reason);
+  console.log('WebSocket connection closed:', {
+    code,
+    reason: reason.toString(),
+  });
 }
 
 function onOpen(_ws: WebSocket): void {
-  console.log('Opened connection');
+  if (isDev) console.log('WebSocket connection opened.');
 }
