@@ -15,7 +15,7 @@
 ### Prerequisites
 
 - Node.js (version 16 or later)
-- npm (or yarn, although this project prefers npm)
+- yarn (or yarn, although this project prefers yarn)
 
 ### Installation
 
@@ -34,7 +34,7 @@
 3. Install dependencies:
 
    ```bash
-   npm install
+   yarn install
    ```
 
 ### Configuration
@@ -51,37 +51,37 @@ PASSWORD=example
 - **Build**: Compile the TypeScript files to JavaScript
 
   ```bash
-  npm run build
+  yarn run build
   ```
 
 - **Development**: Run the application in development mode with live reloading
 
   ```bash
-  npm run dev
+  yarn run dev
   ```
 
 - **Format Code**: Format code with Prettier
 
   ```bash
-  npm run format
+  yarn run format
   ```
 
 - **Lint Code**: Lint code with ESLint
 
   ```bash
-  npm run lint
+  yarn run lint
   ```
 
 - **Start**: Run the application using compiled JavaScript
 
   ```bash
-  npm start
+  yarn run start
   ```
 
 - **Typecheck**: Check TypeScript types
 
   ```bash
-  npm run typecheck
+  yarn run typecheck
   ```
 
 ### Usage
@@ -90,7 +90,7 @@ PASSWORD=example
 2. Run the application:
 
    ```bash
-   npm run start
+   yarn run start
    ```
 
 3. The application will log in to the AT Protocol service and establish a WebSocket connection. It will then listen for earthquake data and post relevant information when an event is detected.
