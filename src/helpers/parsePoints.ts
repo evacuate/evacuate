@@ -7,54 +7,52 @@ interface Point {
 }
 
 export default function parsePoints(points: Point[]): string {
-  // const highestScaleMap: { [key: string]: string } = {};
   const highestScaleMap = new Map<string, string>();
   const finalPoints = new Set<Point>();
 
-  // Find the largest scale for each pref
+  // Process points to find the highest scale for each pref and populate finalPoints
   for (const point of points) {
     const pref = point.pref;
     const scale = parseScale(point.scale);
 
     if (scale !== undefined) {
-      if (
-        !highestScaleMap.has(pref) ||
-        scale > (highestScaleMap.get(pref) ?? -Infinity)
-      ) {
+      const currentHighest = highestScaleMap.get(pref);
+
+      if (currentHighest === undefined || scale > currentHighest) {
         highestScaleMap.set(pref, scale);
+        finalPoints.add(point);
+      } else if (scale === currentHighest) {
+        finalPoints.add(point);
       }
     }
   }
 
-  // Add only the largest scale to the list
-  for (const point of points) {
-    const pref = point.pref;
-    const scale = parseScale(point.scale);
-
-    if (scale !== undefined && scale === highestScaleMap.get(pref)) {
-      finalPoints.add(point);
-    }
-  }
-
-  // Group by scale
+  // Create a map to group regions by scale
   const scaleMap = new Map<string, Set<string>>();
   for (const point of finalPoints) {
-    const pref = point.pref;
     const scale = parseScale(point.scale);
 
     if (scale !== undefined) {
       if (!scaleMap.has(scale)) {
         scaleMap.set(scale, new Set());
       }
-      scaleMap.get(scale)?.add(translate(pref));
+      scaleMap.get(scale)?.add(translate(point.pref));
     }
   }
 
-  const pointsInfo: string[] = [];
-  for (const [scale, regionsSet] of scaleMap.entries()) {
-    const regions = Array.from(regionsSet).join(', ');
-    pointsInfo.push(`[Seismic Intensity ${scale}] ${regions}`);
-  }
+  // Generate the output
+  const pointsInfo = Array.from(scaleMap.entries())
+    .sort((a, b) => {
+      // Compare scales by their numerical value
+      const scaleA = Array.from(scaleMap.keys()).indexOf(a[0]);
+      const scaleB = Array.from(scaleMap.keys()).indexOf(b[0]);
+      return scaleB - scaleA;
+    })
+    .map(([scale, regionsSet]) => {
+      const regions = Array.from(regionsSet).join(', ');
+      return `[Seismic Intensity ${scale}] ${regions}`;
+    })
+    .join('\n');
 
-  return pointsInfo.reverse().join('\n');
+  return pointsInfo;
 }
