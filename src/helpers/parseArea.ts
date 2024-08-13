@@ -4,6 +4,7 @@ interface Area {
   name: string;
 }
 
+// Set of prefecture names
 const prefectures: Set<string> = new Set([
   '北海道',
   '青森県',
@@ -57,18 +58,19 @@ const prefectures: Set<string> = new Set([
 export default function parseArea(area: Area[]): string[] {
   const areaNames: Set<string> = new Set();
 
+  // Normalize the prefecture name only once
+  const prefectureNames = new Set(
+    Array.from(prefectures).map((pref) => pref.split('県')[0] + '県'),
+  );
+
   for (const a of area) {
-    for (const pref of prefectures) {
+    for (const pref of prefectureNames) {
       if (a.name.includes(pref)) {
-        // Extract the prefecture name
-        const prefectureName = a.name.split('県')[0] + '県';
-        // Add the prefecture name to the set
-        areaNames.add(translate(prefectureName));
-        break;
+        areaNames.add(translate(pref));
+        break; // Once found, go to the next `Area`
       }
     }
   }
 
-  // Convert the Set to an array and return it
   return Array.from(areaNames);
 }
