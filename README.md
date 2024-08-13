@@ -108,5 +108,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ### Acknowledgements
 
-- [AT Protocol API](https://github.com/atproto/api)
+- [AT Protocol API](https://github.com/bluesky-social/atproto)
 - [ws](https://github.com/websockets/ws)
