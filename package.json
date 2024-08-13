@@ -32,14 +32,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@atproto/api": "^0.12.29",
+    "@atproto/api": "^0.13.1",
     "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/node": "^22.2.0",
     "@types/ws": "^8.5.12",
-    "@typescript-eslint/eslint-plugin": "^8.0.1",
-    "@typescript-eslint/parser": "^8.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.1.0",
+    "@typescript-eslint/parser": "^8.1.0",
     "dotenv": "^16.4.5",
     "esbuild": "^0.23.0",
     "eslint": "^8.57.0",
