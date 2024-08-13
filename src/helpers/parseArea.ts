@@ -4,8 +4,7 @@ interface Area {
   name: string;
 }
 
-// List of prefecture names
-const prefectures = [
+const prefectures: Set<string> = new Set([
   '北海道',
   '青森県',
   '岩手県',
@@ -53,7 +52,7 @@ const prefectures = [
   '宮崎県',
   '鹿児島県',
   '沖縄県',
-];
+]);
 
 export default function parseArea(area: Area[]): string[] {
   const areaNames: Set<string> = new Set();
