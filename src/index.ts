@@ -11,6 +11,9 @@ import parseArea from './helpers/parseArea';
 // Import Message Functions
 import { createMessage, createTsunamiMessage } from './helpers/messageCreator';
 
+// Import Types
+import { JMAQuake, JMATsunami } from './types';
+
 const EMAIL: string = env.EMAIL;
 const PASSWORD: string = env.PASSWORD!;
 const NODE_ENV: 'development' | 'production' = env.NODE_ENV || 'development';
@@ -56,7 +59,9 @@ async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
   processMessage(earthQuakeData).catch(console.error);
 }
 
-async function processMessage(earthQuakeData: any): Promise<void> {
+async function processMessage(
+  earthQuakeData: JMAQuake | JMATsunami,
+): Promise<void> {
   const code = earthQuakeData.code;
 
   // Output the status code to the log
@@ -68,7 +73,7 @@ async function processMessage(earthQuakeData: any): Promise<void> {
     const earthQuake = earthQuakeData.earthquake;
     const time = earthQuake.time;
     const maxScale = earthQuake.maxScale;
-    const scale = parseScale(maxScale);
+    const scale = parseScale(maxScale ?? -1);
 
     if (scale !== undefined) {
       const text = createMessage(time, info, scale, points, isDev);

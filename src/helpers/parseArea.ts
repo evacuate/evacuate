@@ -1,7 +1,7 @@
 import translate from '../translate';
 
 interface Area {
-  name: string;
+  name?: string;
 }
 
 // Set of prefecture names
@@ -65,7 +65,7 @@ export default function parseArea(area: Area[]): string[] {
 
   for (const a of area) {
     for (const pref of prefectureNames) {
-      if (a.name.includes(pref)) {
+      if (a.name?.includes(pref)) {
         areaNames.add(translate(pref));
         break; // Once found, go to the next `Area`
       }
