@@ -1,4 +1,4 @@
-import { BskyAgent, RichText } from '@atproto/api';
+import { AtpAgent, RichText } from '@atproto/api';
 import WebSocket from 'ws';
 import env from './env';
 
@@ -17,7 +17,7 @@ const NODE_ENV: 'development' | 'production' = env.NODE_ENV || 'development';
 
 const isDev = NODE_ENV === 'development';
 
-const agent = new BskyAgent({
+const agent = new AtpAgent({
   service: 'https://bsky.social',
 });
 
