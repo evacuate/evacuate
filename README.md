@@ -42,8 +42,11 @@
 Create a `.env` file in the root directory and add your credentials:
 
 ```
-EMAIL=user@example.com
-PASSWORD=example
+BLUESKY_EMAIL="user@example.com"
+BLUESKY_PASSWORD="example"
+
+MASTODON_URL="https://mastodon.social"
+MASTODON_ACCESS_TOKEN="example"
 ```
 
 ### Scripts
@@ -110,3 +113,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 - [AT Protocol API](https://github.com/bluesky-social/atproto)
 - [ws](https://github.com/websockets/ws)
+- [masto](https://github.com/neet/masto.js)
