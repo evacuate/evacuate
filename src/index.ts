@@ -14,8 +14,8 @@ import { createMessage, createTsunamiMessage } from './helpers/messageCreator';
 // Import Types
 import { JMAQuake, JMATsunami } from './types';
 
-const EMAIL: string = env.EMAIL;
-const PASSWORD: string = env.PASSWORD!;
+const BLUESKY_EMAIL: string = env.BLUESKY_EMAIL;
+const BLUESKY_PASSWORD: string = env.BLUESKY_PASSWORD!;
 const NODE_ENV: 'development' | 'production' = env.NODE_ENV || 'development';
 
 const isDev = NODE_ENV === 'development';
@@ -27,8 +27,8 @@ const agent = new AtpAgent({
 (async () => {
   try {
     await agent.login({
-      identifier: EMAIL,
-      password: PASSWORD,
+      identifier: BLUESKY_EMAIL,
+      password: BLUESKY_PASSWORD,
     });
 
     if (agent.session !== undefined) {

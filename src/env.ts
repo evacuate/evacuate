@@ -4,12 +4,13 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 interface Env {
-  EMAIL: string;
-  PASSWORD: string;
+  BLUESKY_EMAIL: string;
+  BLUESKY_PASSWORD: string;
   NODE_ENV?: 'development' | 'production';
 }
 
-function validateEnvVar(name: string, value: string | undefined): string {
+function validateEnvVar(name: string): string {
+  const value = process.env[name];
   if (!value) {
     throw new Error(`Environment variable ${name} is not set`);
   }
@@ -17,8 +18,8 @@ function validateEnvVar(name: string, value: string | undefined): string {
 }
 
 const env: Env = {
-  EMAIL: validateEnvVar('EMAIL', process.env.EMAIL),
-  PASSWORD: validateEnvVar('PASSWORD', process.env.PASSWORD),
+  BLUESKY_EMAIL: validateEnvVar('BLUESKY_EMAIL'),
+  BLUESKY_PASSWORD: validateEnvVar('BLUESKY_PASSWORD'),
   NODE_ENV: process.env.NODE_ENV as 'development' | 'production',
 };
 
