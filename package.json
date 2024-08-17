@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@atproto/api": "^0.13.1",
+    "masto": "^6.8.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {

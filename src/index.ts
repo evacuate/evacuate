@@ -1,4 +1,5 @@
-import { AtpAgent, RichText } from '@atproto/api';
+import { createRestAPIClient } from 'masto';
+import { AtpAgent } from '@atproto/api';
 import WebSocket from 'ws';
 import env from './env';
 
@@ -9,19 +10,28 @@ import parseCode from './helpers/parseCode';
 import parseArea from './helpers/parseArea';
 
 // Import Message Functions
+import messageSend from './helpers/messageSend';
 import { createMessage, createTsunamiMessage } from './helpers/messageCreator';
 
 // Import Types
 import { JMAQuake, JMATsunami } from './types';
+import console from 'console';
 
 const BLUESKY_EMAIL: string = env.BLUESKY_EMAIL;
 const BLUESKY_PASSWORD: string = env.BLUESKY_PASSWORD!;
+const MASTODON_URL: string = env.MASTODON_URL ?? 'https://mastodon.social';
+const MASTODON_ACCESS_TOKEN: string = env.MASTODON_ACCESS_TOKEN;
 const NODE_ENV: 'development' | 'production' = env.NODE_ENV || 'development';
 
 const isDev = NODE_ENV === 'development';
 
 const agent = new AtpAgent({
   service: 'https://bsky.social',
+});
+
+const masto = createRestAPIClient({
+  url: MASTODON_URL,
+  accessToken: MASTODON_ACCESS_TOKEN,
 });
 
 (async () => {
@@ -77,14 +87,7 @@ async function processMessage(
 
     if (scale !== undefined) {
       const text = createMessage(time, info, scale, points, isDev);
-      const rt = new RichText({ text });
-      await rt.detectFacets(agent);
-
-      await agent.post({
-        text: rt.text,
-        facets: rt.facets,
-        langs: ['en', 'ja'],
-      });
+      messageSend(text, agent, masto);
 
       console.log('Earthquake alert received and posted successfully.');
     } else {
@@ -98,14 +101,7 @@ async function processMessage(
 
     if (area.length > 0) {
       const text = createTsunamiMessage(time, info, areaResult, isDev);
-      const rt = new RichText({ text });
-      await rt.detectFacets(agent);
-
-      await agent.post({
-        text: rt.text,
-        facets: rt.facets,
-        langs: ['en', 'ja'],
-      });
+      messageSend(text, agent, masto);
 
       console.log('Tsunami alert received and posted successfully.');
     } else {
