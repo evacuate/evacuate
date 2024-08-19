@@ -15,7 +15,6 @@ import { createMessage, createTsunamiMessage } from './helpers/messageCreator';
 
 // Import Types
 import { JMAQuake, JMATsunami } from './types';
-import console from 'console';
 
 const BLUESKY_EMAIL: string = env.BLUESKY_EMAIL;
 const BLUESKY_PASSWORD: string = env.BLUESKY_PASSWORD!;
@@ -34,7 +33,10 @@ const masto = createRestAPIClient({
   accessToken: MASTODON_ACCESS_TOKEN,
 });
 
-(async () => {
+const RECONNECT_DELAY = 5000; // 5 seconds
+let isFirstRun = true; // Flag to check if it's the initial run
+
+async function initWebSocket() {
   try {
     await agent.login({
       identifier: BLUESKY_EMAIL,
@@ -42,14 +44,17 @@ const masto = createRestAPIClient({
     });
 
     if (agent.session !== undefined) {
-      console.log('Logged in successfully.');
+      if (isFirstRun) {
+        console.log('Logged in successfully.');
+        console.log(`Now running in ${NODE_ENV} mode.`);
+        isFirstRun = false; // Set the flag to false after the first run
+      }
     }
 
     const url = isDev
       ? 'wss://api-realtime-sandbox.p2pquake.net/v2/ws'
       : 'wss://api.p2pquake.net/v2/ws';
 
-    console.log(`Now running in ${NODE_ENV} mode.`);
     const ws = new WebSocket(url);
 
     ws.on('open', onOpen);
@@ -59,6 +64,10 @@ const masto = createRestAPIClient({
   } catch (error) {
     console.error('Error during login or WebSocket initialization:', error);
   }
+}
+
+(async () => {
+  await initWebSocket();
 })();
 
 async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
@@ -121,6 +130,12 @@ function onClose(_ws: WebSocket, code: number, reason: Buffer): void {
     code,
     reason: reason.toString(),
   });
+
+  // Attempt to reconnect after a delay
+  setTimeout(() => {
+    console.log('Attempting to reconnect...');
+    initWebSocket();
+  }, RECONNECT_DELAY);
 }
 
 function onOpen(_ws: WebSocket): void {
