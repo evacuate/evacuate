@@ -22,7 +22,7 @@ const MASTODON_URL: string = env.MASTODON_URL ?? 'https://mastodon.social';
 const MASTODON_ACCESS_TOKEN: string = env.MASTODON_ACCESS_TOKEN;
 const NODE_ENV: 'development' | 'production' = env.NODE_ENV || 'development';
 
-const isDev = NODE_ENV === 'development';
+const isDev: boolean = NODE_ENV === 'development';
 
 const agent = new AtpAgent({
   service: 'https://bsky.social',
@@ -33,8 +33,8 @@ const masto = createRestAPIClient({
   accessToken: MASTODON_ACCESS_TOKEN,
 });
 
-const RECONNECT_DELAY = 5000; // 5 seconds
-let isFirstRun = true; // Flag to check if it's the initial run
+const RECONNECT_DELAY: number = 5000; // 5 seconds
+let isFirstRun: boolean = true; // Flag to check if it's the initial run
 
 async function initWebSocket() {
   try {
@@ -55,12 +55,13 @@ async function initWebSocket() {
       ? 'wss://api-realtime-sandbox.p2pquake.net/v2/ws'
       : 'wss://api.p2pquake.net/v2/ws';
 
-    const ws = new WebSocket(url);
+    const socket = new WebSocket(url);
 
-    ws.on('open', onOpen);
-    ws.on('message', (message) => onMessage(ws, message));
-    ws.on('error', (error) => onError(ws, error));
-    ws.on('close', (code, reason) => onClose(ws, code, reason));
+    // WebSocket event listeners
+    socket.onopen = () => void onOpen();
+    socket.onmessage = (message) => void onMessage(message.data);
+    socket.onerror = (error) => void onError(error.message);
+    socket.onclose = (events) => void onClose(events.code, events.reason);
   } catch (error) {
     console.error('Error during login or WebSocket initialization:', error);
   }
@@ -70,7 +71,7 @@ async function initWebSocket() {
   await initWebSocket();
 })();
 
-async function onMessage(_ws: WebSocket, message: WebSocket.Data) {
+async function onMessage(message: any) {
   if (isDev) console.debug('Message received from server.');
   const earthQuakeData = JSON.parse(message.toString());
 
@@ -121,11 +122,11 @@ async function processMessage(
   }
 }
 
-function onError(_ws: WebSocket, error: Error): void {
-  console.error('WebSocket encountered an error:', error);
+function onError(error: string): void {
+  console.error('WebSocket connection error:', error);
 }
 
-function onClose(_ws: WebSocket, code: number, reason: Buffer): void {
+function onClose(code: number, reason: string): void {
   console.log('WebSocket connection closed:', {
     code,
     reason: reason.toString(),
@@ -138,6 +139,6 @@ function onClose(_ws: WebSocket, code: number, reason: Buffer): void {
   }, RECONNECT_DELAY);
 }
 
-function onOpen(_ws: WebSocket): void {
+function onOpen(): void {
   console.log('WebSocket connection opened.');
 }
