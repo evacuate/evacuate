@@ -17,4 +17,4 @@ COPY . .
 RUN yarn build
 
 # Start the app
-CMD ["yarn", "start"]
+CMD ["node", "-r", "newrelic", "dist/index.js"]
