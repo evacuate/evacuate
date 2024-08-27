@@ -13,8 +13,11 @@ RUN yarn install
 # Copy the rest of the application code to the container
 COPY . .
 
+# Copy New Relic configuration
+COPY newrelic.js ./
+
 # Building the app
 RUN yarn build
 
 # Start the app
-CMD ["node", "-r", "newrelic", "dist/index.js"]
+CMD ["yarn", "start"]

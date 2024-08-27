@@ -16,6 +16,9 @@ import { createMessage, createTsunamiMessage } from './helpers/messageCreator';
 // Import Types
 import { JMAQuake, JMATsunami } from './types';
 
+// Import New Relic for monitoring
+import 'newrelic';
+
 const BLUESKY_EMAIL: string = env.BLUESKY_EMAIL;
 const BLUESKY_PASSWORD: string = env.BLUESKY_PASSWORD!;
 const MASTODON_URL: string = env.MASTODON_URL ?? 'https://mastodon.social';
