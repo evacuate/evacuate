@@ -1,4 +1,4 @@
-import { AtpAgent, RichText } from '@atproto/api';
+import { type AtpAgent, RichText } from '@atproto/api';
 
 export default async function messageSend(
   text: string,

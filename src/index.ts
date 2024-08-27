@@ -14,16 +14,16 @@ import messageSend from './helpers/messageSend';
 import { createMessage, createTsunamiMessage } from './helpers/messageCreator';
 
 // Import Types
-import { JMAQuake, JMATsunami } from './types';
+import { type JMAQuake, type JMATsunami } from './types';
 
 // Import New Relic for monitoring
 import 'newrelic';
 
 const BLUESKY_EMAIL: string = env.BLUESKY_EMAIL;
-const BLUESKY_PASSWORD: string = env.BLUESKY_PASSWORD!;
+const BLUESKY_PASSWORD: string = env.BLUESKY_PASSWORD;
 const MASTODON_URL: string = env.MASTODON_URL ?? 'https://mastodon.social';
 const MASTODON_ACCESS_TOKEN: string = env.MASTODON_ACCESS_TOKEN;
-const NODE_ENV: 'development' | 'production' = env.NODE_ENV || 'development';
+const NODE_ENV: 'development' | 'production' = env.NODE_ENV ?? 'development';
 
 const isDev: boolean = NODE_ENV === 'development';
 
@@ -39,7 +39,7 @@ const masto = createRestAPIClient({
 const RECONNECT_DELAY: number = 5000; // 5 seconds
 let isFirstRun: boolean = true; // Flag to check if it's the initial run
 
-async function initWebSocket() {
+async function initWebSocket(): Promise<void> {
   try {
     await agent.login({
       identifier: BLUESKY_EMAIL,
@@ -61,22 +61,36 @@ async function initWebSocket() {
     const socket = new WebSocket(url);
 
     // WebSocket event listeners
-    socket.onopen = () => void onOpen();
-    socket.onmessage = (message) => void onMessage(message.data);
-    socket.onerror = (error) => void onError(error.message);
-    socket.onclose = (events) => void onClose(events.code, events.reason);
+    socket.onopen = () => {
+      onOpen();
+    };
+
+    socket.onmessage = (message) => {
+      onMessage(message.data);
+    };
+
+    socket.onerror = (error) => {
+      onError(error.message);
+    };
+
+    socket.onclose = (events) => {
+      onClose(events.code, events.reason);
+    };
   } catch (error) {
     console.error('Error during login or WebSocket initialization:', error);
   }
 }
 
-(async () => {
+// Initialize the WebSocket connection
+void (async () => {
   await initWebSocket();
 })();
 
-async function onMessage(message: any) {
+function onMessage(message: any): void {
   if (isDev) console.debug('Message received from server.');
-  const earthQuakeData = JSON.parse(message.toString());
+  const earthQuakeData = JSON.parse(message.toString() as string) as
+    | JMAQuake
+    | JMATsunami;
 
   // Asynchronous processing
   processMessage(earthQuakeData).catch(console.error);
@@ -100,7 +114,7 @@ async function processMessage(
 
     if (scale !== undefined) {
       const text = createMessage(time, info, scale, points, isDev);
-      messageSend(text, agent, masto);
+      void messageSend(text, agent, masto);
 
       console.log('Earthquake alert received and posted successfully.');
     } else {
@@ -114,7 +128,7 @@ async function processMessage(
 
     if (area.length > 0) {
       const text = createTsunamiMessage(time, info, areaResult, isDev);
-      messageSend(text, agent, masto);
+      void messageSend(text, agent, masto);
 
       console.log('Tsunami alert received and posted successfully.');
     } else {
@@ -138,7 +152,7 @@ function onClose(code: number, reason: string): void {
   // Attempt to reconnect after a delay
   setTimeout(() => {
     console.log('Attempting to reconnect...');
-    initWebSocket();
+    void initWebSocket();
   }, RECONNECT_DELAY);
 }
 

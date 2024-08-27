@@ -1,4 +1,4 @@
-const prefectures: Map<string, string> = new Map([
+const prefectures = new Map<string, string>([
   ['北海道', 'Hokkaido'],
   ['青森県', 'Aomori'],
   ['岩手県', 'Iwate'],
@@ -49,5 +49,5 @@ const prefectures: Map<string, string> = new Map([
 ]);
 
 export default function translate(text: string): string {
-  return prefectures.get(text) || text;
+  return prefectures.get(text) ?? text;
 }
