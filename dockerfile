@@ -4,6 +4,11 @@ FROM node:20
 # Set the working directory to /app
 WORKDIR /app
 
+# Set newrelic environment variables
+ENV NEW_RELIC_NO_CONFIG_FILE=true
+ENV NEW_RELIC_DISTRIBUTED_TRACING_ENABLED=true
+ENV NEW_RELIC_LOG=stdout
+
 # Copy package.json and package-lock.json to the container
 COPY package*.json ./
 
@@ -13,11 +18,8 @@ RUN yarn install
 # Copy the rest of the application code to the container
 COPY . .
 
-# Copy New Relic configuration
-COPY newrelic.js ./
-
 # Building the app
 RUN yarn build
 
 # Start the app
-CMD ["yarn", "start"]
+CMD ["node", "-r", "newrelic", "dist/index.js"]
