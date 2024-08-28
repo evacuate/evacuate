@@ -1,6 +1,12 @@
 import { createRestAPIClient } from 'masto';
 import { type AtpAgent, RichText } from '@atproto/api';
+import { finalizeEvent, getPublicKey } from 'nostr-tools/pure';
+import { Relay, useWebSocketImplementation } from 'nostr-tools/relay';
+import * as nip19 from 'nostr-tools/nip19';
 import env from '../env';
+import WebSocket from 'ws';
+
+useWebSocketImplementation(WebSocket);
 
 const MASTODON_URL: string = env.MASTODON_URL ?? 'https://mastodon.social';
 const MASTODON_ACCESS_TOKEN: string = env.MASTODON_ACCESS_TOKEN;
@@ -32,18 +38,14 @@ export default async function messageSend(
 
   if (env.NOSTR_PRIVATE_KEY !== undefined) {
     try {
-      // This writing style because it does not import well.
-      const { Relay, finalizeEvent, getPublicKey } = await import(
-        'nostr-tools'
-      );
-
       // Post to Nostr
-      const relay = await Relay.connect('wss://relay.nostr.info'); // Replace with your relay URL
+      const relay = await Relay.connect('wss://relay.damus.io');
       console.log(`Connected to Nostr relay at ${relay.url}`);
 
       await relay.connect();
 
-      const sk = new TextEncoder().encode(env.NOSTR_PRIVATE_KEY);
+      const decodeResult = nip19.decode(env.NOSTR_PRIVATE_KEY);
+      const sk = decodeResult.data as Uint8Array;
       const pk = getPublicKey(sk);
 
       const event = {
