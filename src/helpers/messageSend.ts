@@ -30,33 +30,37 @@ export default async function messageSend(
     visibility: 'public',
   });
 
-  try {
-    // This writing style because it does not import well.
-    const { Relay, finalizeEvent, getPublicKey } = await import('nostr-tools');
+  if (env.NOSTR_PRIVATE_KEY !== undefined) {
+    try {
+      // This writing style because it does not import well.
+      const { Relay, finalizeEvent, getPublicKey } = await import(
+        'nostr-tools'
+      );
 
-    // Post to Nostr
-    const relay = await Relay.connect('wss://relay.nostr.info'); // Replace with your relay URL
-    console.log(`Connected to Nostr relay at ${relay.url}`);
+      // Post to Nostr
+      const relay = await Relay.connect('wss://relay.nostr.info'); // Replace with your relay URL
+      console.log(`Connected to Nostr relay at ${relay.url}`);
 
-    await relay.connect();
+      await relay.connect();
 
-    const sk = new TextEncoder().encode(env.NOSTR_PRIVATE_KEY);
-    const pk = getPublicKey(sk);
+      const sk = new TextEncoder().encode(env.NOSTR_PRIVATE_KEY);
+      const pk = getPublicKey(sk);
 
-    const event = {
-      kind: 1,
-      created_at: Math.floor(Date.now() / 1000),
-      tags: [],
-      content: text,
-      pubkey: pk,
-    };
+      const event = {
+        kind: 1,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [],
+        content: text,
+        pubkey: pk,
+      };
 
-    const signedEvent = finalizeEvent(event, sk);
-    await relay.publish(signedEvent);
-    console.log('Message sent to Nostr');
+      const signedEvent = finalizeEvent(event, sk);
+      await relay.publish(signedEvent);
+      console.log('Message sent to Nostr');
 
-    relay.close();
-  } catch (error) {
-    console.error('Error during Nostr message send:', error);
+      relay.close();
+    } catch (error) {
+      console.error('Error during Nostr message send:', error);
+    }
   }
 }

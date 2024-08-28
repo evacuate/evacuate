@@ -9,7 +9,7 @@ interface Env {
   MASTODON_URL?: string;
   MASTODON_ACCESS_TOKEN: string;
   NODE_ENV?: 'development' | 'production';
-  NOSTR_PRIVATE_KEY: string;
+  NOSTR_PRIVATE_KEY?: string | undefined;
 }
 
 function validateEnvVar(name: string): string {
@@ -27,7 +27,7 @@ const env: Env = {
   MASTODON_URL: validateEnvVar('MASTODON_URL'),
   MASTODON_ACCESS_TOKEN: validateEnvVar('MASTODON_ACCESS_TOKEN'),
   NODE_ENV: process.env.NODE_ENV as 'development' | 'production',
-  NOSTR_PRIVATE_KEY: validateEnvVar('NOSTR_PRIVATE_KEY'),
+  NOSTR_PRIVATE_KEY: process.env.NOSTR_PRIVATE_KEY,
 };
 
 export default env;
