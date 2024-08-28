@@ -1,4 +1,3 @@
-import { createRestAPIClient } from 'masto';
 import { AtpAgent } from '@atproto/api';
 import WebSocket from 'ws';
 import env from './env';
@@ -18,19 +17,12 @@ import { type JMAQuake, type JMATsunami } from './types';
 
 const BLUESKY_EMAIL: string = env.BLUESKY_EMAIL;
 const BLUESKY_PASSWORD: string = env.BLUESKY_PASSWORD;
-const MASTODON_URL: string = env.MASTODON_URL ?? 'https://mastodon.social';
-const MASTODON_ACCESS_TOKEN: string = env.MASTODON_ACCESS_TOKEN;
 const NODE_ENV: 'development' | 'production' = env.NODE_ENV ?? 'development';
 
 const isDev: boolean = NODE_ENV === 'development';
 
 const agent = new AtpAgent({
   service: 'https://bsky.social',
-});
-
-const masto = createRestAPIClient({
-  url: MASTODON_URL,
-  accessToken: MASTODON_ACCESS_TOKEN,
 });
 
 const RECONNECT_DELAY: number = 5000; // 5 seconds
@@ -111,7 +103,7 @@ async function processMessage(
 
     if (scale !== undefined) {
       const text = createMessage(time, info, scale, points, isDev);
-      void messageSend(text, agent, masto);
+      void messageSend(text, agent);
 
       console.log('Earthquake alert received and posted successfully.');
     } else {
@@ -125,7 +117,7 @@ async function processMessage(
 
     if (area.length > 0) {
       const text = createTsunamiMessage(time, info, areaResult, isDev);
-      void messageSend(text, agent, masto);
+      void messageSend(text, agent);
 
       console.log('Tsunami alert received and posted successfully.');
     } else {
