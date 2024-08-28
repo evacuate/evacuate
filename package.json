@@ -55,8 +55,7 @@
     "tsx": "^4.17.0",
     "typescript": "^5.5.4",
     "vite-tsconfig-paths": "^5.0.1",
-    "vitest": "^2.0.5",
-    "websocket-polyfill": "^1.0.0"
+    "vitest": "^2.0.5"
   },
   "engines": {
     "node": ">=20.x"

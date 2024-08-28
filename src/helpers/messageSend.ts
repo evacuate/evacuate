@@ -1,6 +1,5 @@
 import { createRestAPIClient } from 'masto';
 import { type AtpAgent, RichText } from '@atproto/api';
-import 'websocket-polyfill';
 import env from '../env';
 
 const MASTODON_URL: string = env.MASTODON_URL ?? 'https://mastodon.social';
