@@ -32,21 +32,21 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@atproto/api": "^0.13.1",
+    "@atproto/api": "^0.13.5",
     "@newrelic/pino-enricher": "^1.1.1",
     "masto": "^6.8.0",
-    "newrelic": "^12.2.0",
+    "newrelic": "^12.3.0",
     "nostr-tools": "^2.7.2",
     "pino": "^9.3.2",
     "ws": "^8.18.0"
   },
   "devDependencies": {
-    "@types/node": "^22.2.0",
+    "@types/node": "^22.5.1",
     "@types/ws": "^8.5.12",
     "@typescript-eslint/eslint-plugin": "^7.10.0",
     "@typescript-eslint/parser": "7.10.0",
     "dotenv": "^16.4.5",
-    "esbuild": "^0.23.0",
+    "esbuild": "^0.23.1",
     "eslint": "^8.57.0",
     "eslint-config-love": "^47.0.0",
     "eslint-config-prettier": "^9.1.0",
@@ -54,7 +54,7 @@
     "eslint-plugin-n": "^16.0.0",
     "eslint-plugin-promise": "^6.1.0",
     "prettier": "^3.3.3",
-    "tsx": "^4.17.0",
+    "tsx": "^4.19.0",
     "typescript": "^5.5.4",
     "vite-tsconfig-paths": "^5.0.1",
     "vitest": "^2.0.5"
