@@ -1,4 +1,3 @@
-import 'newrelic'; // Import New Relic
 import { AtpAgent } from '@atproto/api';
 import nrPino from '@newrelic/pino-enricher';
 import WebSocket from 'ws';

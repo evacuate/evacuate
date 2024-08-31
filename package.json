@@ -15,7 +15,7 @@
   },
   "license": "MIT",
   "author": "evacuate",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "build": "node ./scripts/rm.mjs dist && node scripts/build.mjs",

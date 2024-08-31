@@ -5,12 +5,12 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const options = {
   entryPoints: [path.resolve(__dirname, '../src/index.ts')],
-  outfile: path.resolve(__dirname, '../dist/index.js'),
+  outfile: path.resolve(__dirname, '../dist/index.cjs'),
   platform: 'node',
   format: 'cjs',
   bundle: true,
   minify: true,
-  external: ['newrelic', 'split'],
+  external: ['newrelic'],
 };
 
 build(options).catch((err) => {

@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["ES2022"],
+    "lib": ["ES2015"],
     "module": "ES2015",
     "moduleDetection": "auto",
     "moduleResolution": "Bundler",
@@ -21,7 +21,7 @@
     "strict": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "target": "ES2019",
+    "target": "ES2015",
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "paths": {
       "~/*": ["./src/*"]
