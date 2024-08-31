@@ -4,7 +4,6 @@
     "node": true
   },
   "extends": ["love", "prettier"],
-  "exclude": ["node_modules", "scripts"],
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module"
