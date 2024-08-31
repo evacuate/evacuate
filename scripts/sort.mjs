@@ -1,12 +1,14 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 // Path of package.json
 const packageJsonPath = path.resolve(__dirname, '../package.json');
 
 // Read package.json
 fs.readFile(packageJsonPath, 'utf8', (err, data) => {
-  if (err) {
+  if (err !== null) {
     console.error('Error reading package.json:', err);
     return;
   }
@@ -21,7 +23,8 @@ fs.readFile(packageJsonPath, 'utf8', (err, data) => {
 
   // Define custom sorting for devDependencies
   function customSortDependencies(dependencies) {
-    if (!dependencies || typeof dependencies !== 'object') return dependencies;
+    if (dependencies !== null || typeof dependencies !== 'object')
+      return dependencies;
 
     return Object.keys(dependencies)
       .sort((a, b) => {

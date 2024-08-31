@@ -1,5 +1,7 @@
-const { build } = require('esbuild');
-const path = require('path');
+import { build } from 'esbuild';
+import path from 'path';
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const options = {
   entryPoints: [path.resolve(__dirname, '../src/index.ts')],
@@ -8,9 +10,10 @@ const options = {
   format: 'cjs',
   bundle: true,
   minify: true,
+  external: ['newrelic', 'split'],
 };
 
 build(options).catch((err) => {
-  process.stderr.write(err.stderr);
+  console.error(err);
   process.exit(1);
 });

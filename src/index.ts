@@ -1,7 +1,9 @@
+import 'newrelic'; // Import New Relic
 import { AtpAgent } from '@atproto/api';
+import nrPino from '@newrelic/pino-enricher';
 import WebSocket from 'ws';
-import env from './env';
 import pino from 'pino';
+import env from './env';
 
 // Import Helper Functions
 import parsePoints from './helpers/parsePoints';
@@ -16,9 +18,7 @@ import { createMessage, createTsunamiMessage } from './helpers/messageCreator';
 // Import Types
 import { type JMAQuake, type JMATsunami } from './types';
 
-const logger = pino({
-  level: env.NODE_ENV === 'development' ? 'debug' : 'info', // Set log level based on environment
-});
+const logger = pino(nrPino());
 
 const BLUESKY_EMAIL: string = env.BLUESKY_EMAIL;
 const BLUESKY_PASSWORD: string = env.BLUESKY_PASSWORD;

@@ -22,7 +22,7 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "target": "ES2019",
-    "typeRoots": ["./node_modules/@types"],
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "paths": {
       "~/*": ["./src/*"]
     },
