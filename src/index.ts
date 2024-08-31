@@ -1,6 +1,7 @@
 import { AtpAgent } from '@atproto/api';
 import WebSocket from 'ws';
 import env from './env';
+import pino from 'pino';
 
 // Import Helper Functions
 import parsePoints from './helpers/parsePoints';
@@ -14,6 +15,10 @@ import { createMessage, createTsunamiMessage } from './helpers/messageCreator';
 
 // Import Types
 import { type JMAQuake, type JMATsunami } from './types';
+
+const logger = pino({
+  level: env.NODE_ENV === 'development' ? 'debug' : 'info', // Set log level based on environment
+});
 
 const BLUESKY_EMAIL: string = env.BLUESKY_EMAIL;
 const BLUESKY_PASSWORD: string = env.BLUESKY_PASSWORD;
@@ -37,8 +42,8 @@ async function initWebSocket(): Promise<void> {
 
     if (agent.session !== undefined) {
       if (isFirstRun) {
-        console.log('Logged in successfully.');
-        console.log(`Now running in ${NODE_ENV} mode.`);
+        logger.info('Logged in successfully.');
+        logger.info(`Now running in ${NODE_ENV} mode.`);
         isFirstRun = false; // Set the flag to false after the first run
       }
     }
@@ -66,7 +71,7 @@ async function initWebSocket(): Promise<void> {
       onClose(events.code, events.reason);
     };
   } catch (error) {
-    console.error('Error during login or WebSocket initialization:', error);
+    logger.error('Error during login or WebSocket initialization:', error);
   }
 }
 
@@ -76,13 +81,13 @@ void (async () => {
 })();
 
 function onMessage(message: any): void {
-  if (isDev) console.debug('Message received from server.');
+  if (isDev) logger.debug('Message received from server.');
   const earthQuakeData = JSON.parse(message.toString() as string) as
     | JMAQuake
     | JMATsunami;
 
   // Asynchronous processing
-  processMessage(earthQuakeData).catch(console.error);
+  processMessage(earthQuakeData).catch(logger.error);
 }
 
 async function processMessage(
@@ -91,7 +96,7 @@ async function processMessage(
   const code = earthQuakeData.code;
 
   // Output the status code to the log
-  console.log(`Received message with status code: ${code}`);
+  logger.info(`Received message with status code: ${code}`);
 
   if (code === 551) {
     const info = parseCode(code);
@@ -105,9 +110,9 @@ async function processMessage(
       const text = createMessage(time, info, scale, points, isDev);
       void messageSend(text, agent);
 
-      console.log('Earthquake alert received and posted successfully.');
+      logger.info('Earthquake alert received and posted successfully.');
     } else {
-      console.warn('Earthquake scale is undefined.');
+      logger.warn('Earthquake scale is undefined.');
     }
   } else if (code === 552) {
     const info = parseCode(code);
@@ -119,32 +124,32 @@ async function processMessage(
       const text = createTsunamiMessage(time, info, areaResult, isDev);
       void messageSend(text, agent);
 
-      console.log('Tsunami alert received and posted successfully.');
+      logger.info('Tsunami alert received and posted successfully.');
     } else {
-      console.warn('Tsunami area is undefined.');
+      logger.warn('Tsunami area is undefined.');
     }
   } else {
-    if (isDev) console.warn('Unknown message code:', code);
+    if (isDev) logger.warn('Unknown message code:', code);
   }
 }
 
 function onError(error: string): void {
-  console.error('WebSocket connection error:', error);
+  logger.error('WebSocket connection error:', error);
 }
 
 function onClose(code: number, reason: string): void {
-  console.log('WebSocket connection closed:', {
+  logger.info('WebSocket connection closed:', {
     code,
     reason: reason.toString(),
   });
 
   // Attempt to reconnect after a delay
   setTimeout(() => {
-    console.log('Attempting to reconnect...');
+    logger.info('Attempting to reconnect...');
     void initWebSocket();
   }, RECONNECT_DELAY);
 }
 
 function onOpen(): void {
-  console.log('WebSocket connection opened.');
+  logger.info('WebSocket connection opened.');
 }

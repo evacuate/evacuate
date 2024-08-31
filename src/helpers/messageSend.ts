@@ -5,8 +5,13 @@ import { Relay, useWebSocketImplementation } from 'nostr-tools/relay';
 import * as nip19 from 'nostr-tools/nip19';
 import env from '../env';
 import WebSocket from 'ws';
+import pino from 'pino';
 
 useWebSocketImplementation(WebSocket);
+
+const logger = pino({
+  level: env.NODE_ENV === 'development' ? 'debug' : 'info', // Set log level based on environment
+});
 
 const MASTODON_URL: string = env.MASTODON_URL ?? 'https://mastodon.social';
 const MASTODON_ACCESS_TOKEN: string = env.MASTODON_ACCESS_TOKEN;
@@ -40,7 +45,7 @@ export default async function messageSend(
     try {
       // Post to Nostr
       const relay = await Relay.connect('wss://relay.damus.io');
-      console.log(`Connected to Nostr relay at ${relay.url}`);
+      logger.info(`Connected to Nostr relay at ${relay.url}`);
 
       await relay.connect();
 
@@ -58,11 +63,11 @@ export default async function messageSend(
 
       const signedEvent = finalizeEvent(event, sk);
       await relay.publish(signedEvent);
-      console.log('Message sent to Nostr');
+      logger.info('Message sent to Nostr');
 
       relay.close();
     } catch (error) {
-      console.error('Error during Nostr message send:', error);
+      logger.error('Error during Nostr message send:', error);
     }
   }
 }
