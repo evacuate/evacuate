@@ -7,7 +7,7 @@ interface Env {
   BLUESKY_EMAIL: string;
   BLUESKY_PASSWORD: string;
   MASTODON_URL?: string;
-  MASTODON_ACCESS_TOKEN: string;
+  MASTODON_ACCESS_TOKEN?: string | undefined;
   NODE_ENV?: 'development' | 'production';
   NOSTR_PRIVATE_KEY?: string | undefined;
 }
@@ -25,7 +25,7 @@ const env: Env = {
   BLUESKY_EMAIL: validateEnvVar('BLUESKY_EMAIL'),
   BLUESKY_PASSWORD: validateEnvVar('BLUESKY_PASSWORD'),
   MASTODON_URL: validateEnvVar('MASTODON_URL'),
-  MASTODON_ACCESS_TOKEN: validateEnvVar('MASTODON_ACCESS_TOKEN'),
+  MASTODON_ACCESS_TOKEN: process.env.MASTODON_ACCESS_TOKEN,
   NODE_ENV: process.env.NODE_ENV as 'development' | 'production',
   NOSTR_PRIVATE_KEY: process.env.NOSTR_PRIVATE_KEY,
 };

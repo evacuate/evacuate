@@ -14,7 +14,6 @@ const logger = pino({
 });
 
 const MASTODON_URL: string = env.MASTODON_URL ?? 'https://mastodon.social';
-const MASTODON_ACCESS_TOKEN: string = env.MASTODON_ACCESS_TOKEN;
 
 export default async function messageSend(
   text: string,
@@ -30,16 +29,18 @@ export default async function messageSend(
     langs: ['en', 'ja'],
   });
 
-  const masto = createRestAPIClient({
-    url: MASTODON_URL,
-    accessToken: MASTODON_ACCESS_TOKEN,
-  });
+  if (env.MASTODON_ACCESS_TOKEN !== undefined) {
+    const masto = createRestAPIClient({
+      url: MASTODON_URL,
+      accessToken: env.MASTODON_ACCESS_TOKEN,
+    });
 
-  // Post to Mastodon
-  await masto.v1.statuses.create({
-    status: text,
-    visibility: 'public',
-  });
+    // Post to Mastodon
+    await masto.v1.statuses.create({
+      status: text,
+      visibility: 'public',
+    });
+  }
 
   if (env.NOSTR_PRIVATE_KEY !== undefined) {
     try {
