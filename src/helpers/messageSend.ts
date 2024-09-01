@@ -15,6 +15,15 @@ const logger = pino({
 
 const MASTODON_URL: string = env.MASTODON_URL ?? 'https://mastodon.social';
 
+// Define a list of relays
+const NOSTR_RELAYS = [
+  'wss://relay.damus.io',
+  'wss://yabu.me',
+  'wss://nostr-pub.wellorder.net',
+  'wss://nos.lol',
+  // Add as needed
+];
+
 export default async function messageSend(
   text: string,
   agent: AtpAgent,
@@ -45,11 +54,6 @@ export default async function messageSend(
   if (env.NOSTR_PRIVATE_KEY !== undefined) {
     try {
       // Post to Nostr
-      const relay = await Relay.connect('wss://relay.damus.io');
-      logger.info(`Connected to Nostr relay at ${relay.url}`);
-
-      await relay.connect();
-
       const decodeResult = nip19.decode(env.NOSTR_PRIVATE_KEY);
       const sk = decodeResult.data as Uint8Array;
       const pk = getPublicKey(sk);
@@ -63,10 +67,30 @@ export default async function messageSend(
       };
 
       const signedEvent = finalizeEvent(event, sk);
-      await relay.publish(signedEvent);
-      logger.info('Message sent to Nostr');
 
-      relay.close();
+      let successfulRelays = 0;
+
+      // Send a message to each relay
+      for (const relayUrl of NOSTR_RELAYS) {
+        try {
+          const relay = await Relay.connect(relayUrl);
+
+          await relay.connect();
+          await relay.publish(signedEvent);
+          successfulRelays++;
+
+          relay.close();
+        } catch (relayError) {
+          logger.error(
+            `Error during Nostr message send to ${relayUrl}`,
+            relayError,
+          );
+        }
+      }
+
+      logger.info(
+        `Submission was successful for ${successfulRelays} out of ${NOSTR_RELAYS.length} relays`,
+      );
     } catch (error) {
       logger.error('Error during Nostr message send:', error);
     }
