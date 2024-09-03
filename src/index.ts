@@ -1,21 +1,21 @@
 import { AtpAgent } from '@atproto/api';
 import nrPino from '@newrelic/pino-enricher';
-import WebSocket from 'ws';
 import pino from 'pino';
+import WebSocket from 'ws';
 import env from './env';
 
 // Import Helper Functions
+import parseArea from './helpers/parseArea';
+import parseCode from './helpers/parseCode';
 import parsePoints from './helpers/parsePoints';
 import parseScale from './helpers/parseScale';
-import parseCode from './helpers/parseCode';
-import parseArea from './helpers/parseArea';
 
 // Import Message Functions
-import messageSend from './helpers/messageSend';
 import { createMessage, createTsunamiMessage } from './helpers/messageCreator';
+import messageSend from './helpers/messageSend';
 
 // Import Types
-import { type JMAQuake, type JMATsunami } from './types';
+import type { JMAQuake, JMATsunami } from './types';
 
 const logger = pino(nrPino());
 
@@ -30,7 +30,7 @@ const agent = new AtpAgent({
 });
 
 const RECONNECT_DELAY: number = 5000; // 5 seconds
-let isFirstRun: boolean = true; // Flag to check if it's the initial run
+let isFirstRun = true; // Flag to check if it's the initial run
 
 async function initWebSocket(): Promise<void> {
   try {
@@ -79,7 +79,7 @@ void (async () => {
   await initWebSocket();
 })();
 
-function onMessage(message: any): void {
+function onMessage(message: WebSocket.Data): void {
   if (isDev) logger.debug('Message received from server.');
   const earthQuakeData = JSON.parse(message.toString() as string) as
     | JMAQuake

@@ -60,7 +60,7 @@ export default function parseArea(area: Area[]): string[] {
 
   // Normalize the prefecture name only once
   const prefectureNames = new Set(
-    Array.from(prefectures).map((pref) => pref.split('県')[0] + '県'),
+    Array.from(prefectures).map((pref) => `${pref.split('県')[0]}県`),
   );
 
   for (const a of area) {
