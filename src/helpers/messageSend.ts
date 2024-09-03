@@ -1,11 +1,11 @@
-import { createRestAPIClient } from 'masto';
 import { type AtpAgent, RichText } from '@atproto/api';
+import { createRestAPIClient } from 'masto';
+import * as nip19 from 'nostr-tools/nip19';
 import { finalizeEvent, getPublicKey } from 'nostr-tools/pure';
 import { Relay, useWebSocketImplementation } from 'nostr-tools/relay';
-import * as nip19 from 'nostr-tools/nip19';
-import env from '../env';
-import WebSocket from 'ws';
 import pino from 'pino';
+import WebSocket from 'ws';
+import env from '../env';
 
 useWebSocketImplementation(WebSocket);
 
