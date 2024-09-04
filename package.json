@@ -2,9 +2,7 @@
   "name": "evacuate",
   "version": "1.0.0",
   "description": "",
-  "keywords": [
-    "evacuate"
-  ],
+  "keywords": ["evacuate"],
   "homepage": "https://github.com/evacuate/evacuate#readme",
   "bugs": {
     "url": "https://github.com/evacuate/evacuate/issues"
@@ -52,6 +50,6 @@
     "vitest": "^2.0.5"
   },
   "engines": {
-    "node": ">=20.x"
+    "node": "20.17.0"
   }
 }
