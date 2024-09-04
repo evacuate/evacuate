@@ -1,0 +1,46 @@
+name: Preview
+
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Biome
+        run: npm run lint
+
+  deploy:
+    name: Deploy to Preview
+    runs-on: ubuntu-latest
+    needs: lint # Run only if the lint job succeeds
+
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to Dokku (Preview)
+        uses: dokku/github-action@v1.5.0
+        with:
+          git_remote_url: ssh://dokku@${{ secrets.DOKKU_PREVIEW_HOST }}:${{ secrets.DOKKU_PREVIEW_PORT }}/${{ secrets.DOKKU_PREVIEW_APP_NAME }}
+          ssh_private_key: ${{ secrets.DOKKU_PREVIEW_SSH_PRIVATE_KEY }}
+          branch: 'develop'
+          git_push_flags: --force
