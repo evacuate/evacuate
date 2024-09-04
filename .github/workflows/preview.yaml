@@ -2,7 +2,7 @@ name: Preview
 
 on:
   push:
-    branches: [develop]
+    branches: [ "develop" ]
 
 jobs:
   lint:
