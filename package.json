@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
-    "@types/node": "^22.5.1",
+    "@types/node": "^22.5.2",
     "@types/ws": "^8.5.12",
     "dotenv": "^16.4.5",
     "esbuild": "^0.23.1",
