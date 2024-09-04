@@ -2,7 +2,7 @@ name: Preview
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: ["develop"]
 
 jobs:
   lint:
@@ -18,7 +18,7 @@ jobs:
       - name: Set Up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: "20.x"
 
       - name: Install Dependencies
         run: npm install
@@ -42,5 +42,5 @@ jobs:
         with:
           git_remote_url: ssh://dokku@${{ secrets.DOKKU_PREVIEW_HOST }}:${{ secrets.DOKKU_PREVIEW_PORT }}/${{ secrets.DOKKU_PREVIEW_APP_NAME }}
           ssh_private_key: ${{ secrets.DOKKU_PREVIEW_SSH_PRIVATE_KEY }}
-          branch: 'develop'
+          branch: "develop"
           git_push_flags: --force
