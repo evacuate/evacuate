@@ -22,6 +22,7 @@ permissions:
 
 jobs:
   OSSAR-Scan:
+    name: OSSAR Scan
     # OSSAR runs on windows-latest.
     # ubuntu-latest and macos-latest support coming soon
     permissions:
