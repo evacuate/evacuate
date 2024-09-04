@@ -1,8 +1,8 @@
-name: Production
+name: Preview
 
 on:
   push:
-    branches: ["main"]
+    branches: ["develop"]
 
 jobs:
   lint:
@@ -40,7 +40,7 @@ jobs:
       - name: Push to Dokku
         uses: dokku/github-action@v1.5.0
         with:
-          git_remote_url: ssh://dokku@${{ secrets.DOKKU_HOST }}:${{ secrets.DOKKU_PORT }}/${{ secrets.DOKKU_APP_NAME }}
-          ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
-          branch: "main"
+          git_remote_url: ssh://dokku@${{ secrets.DOKKU_PREVIEW_HOST }}:${{ secrets.DOKKU_PREVIEW_PORT }}/${{ secrets.DOKKU_PREVIEW_APP_NAME }}
+          ssh_private_key: ${{ secrets.DOKKU_PREVIEW_SSH_PRIVATE_KEY }}
+          branch: "develop"
           git_push_flags: --force
