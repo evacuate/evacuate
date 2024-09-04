@@ -23,5 +23,8 @@
       "quoteStyle": "single",
       "attributePosition": "auto"
     }
+  },
+  "files": {
+    "ignore": ["node_modules", "dist"]
   }
 }
