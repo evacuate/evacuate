@@ -33,7 +33,8 @@ test('message', async ({ expect }) => {
     );
 
     // Expected Messages
-    const expectedMessage = `2024/08/10 14:18:00 Earthquake Information\nMaximum Seismic Intensity 3\n\n[Seismic Intensity 1] Fukuoka, Nagasaki, Miyazaki\n[Seismic Intensity 3] Kumamoto\n#evacuate`;
+    const expectedMessage =
+      '2024/08/10 14:18:00 Earthquake Information\nMaximum Seismic Intensity 3\n\n[Seismic Intensity 1] Fukuoka, Nagasaki, Miyazaki\n[Seismic Intensity 3] Kumamoto\n#evacuate';
 
     expect(message).toBe(expectedMessage);
   }
@@ -57,7 +58,8 @@ test('message 1', async ({ expect }) => {
     );
 
     // Expected Messages
-    const expectedMessage = `2024/08/10 12:29:00 Earthquake Information\nMaximum Seismic Intensity 3\n\n[Seismic Intensity 1] Akita, Yamagata\n[Seismic Intensity 2] Miyagi\n[Seismic Intensity 3] Hokkaido, Aomori, Iwate\n#evacuate`;
+    const expectedMessage =
+      '2024/08/10 12:29:00 Earthquake Information\nMaximum Seismic Intensity 3\n\n[Seismic Intensity 1] Akita, Yamagata\n[Seismic Intensity 2] Miyagi\n[Seismic Intensity 3] Hokkaido, Aomori, Iwate\n#evacuate';
 
     expect(message).toBe(expectedMessage);
   }
@@ -72,7 +74,8 @@ test('tsunami message', async ({ expect }) => {
   const message = createTsunamiMessage(time, info, areaResult, false);
 
   // Expected Messages
-  const expectedMessage = `2024/08/08 16:52:10 Tsunami Information\nThere is new information in the following areas\n\nEhime, Kochi, Oita, Miyazaki, Kagoshima\n#evacuate`;
+  const expectedMessage =
+    '2024/08/08 16:52:10 Tsunami Information\nThere is new information in the following areas\n\nEhime, Kochi, Oita, Miyazaki, Kagoshima\n#evacuate';
 
   expect(message).toBe(expectedMessage);
 });
