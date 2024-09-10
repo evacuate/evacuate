@@ -1,6 +1,4 @@
-# evacuate
-
-<!-- Service names must be lower case. -->
+# Evacuate
 
 `evacuate` is a TypeScript application that monitors seismic activity and posts earthquake information to a specified service. The application connects to a WebSocket API to receive earthquake data, processes this information, and posts it with relevant details using the AT Protocol API.
 
@@ -63,13 +61,13 @@ MASTODON_ACCESS_TOKEN="example"
   yarn run dev
   ```
 
-- **Format Code**: Format code with Prettier
+- **Format Code**: Format code
 
   ```bash
   yarn run format
   ```
 
-- **Lint Code**: Lint code with ESLint
+- **Lint Code**: Lint code
 
   ```bash
   yarn run lint
