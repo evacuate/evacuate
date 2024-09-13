@@ -23,8 +23,7 @@
     "format": "biome format .",
     "format:write": "biome format --write ./src",
     "lint": "biome lint ./src",
-    "sort": "node ./scripts/sort.mjs",
-    "start": "node dist/index.js",
+    "start": "node dist/index.cjs",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "typecheck": "tsc --noEmit"
@@ -33,7 +32,7 @@
     "@atproto/api": "^0.13.5",
     "@newrelic/pino-enricher": "^1.1.1",
     "masto": "^6.8.0",
-    "newrelic": "^12.3.0",
+    "newrelic": "^12.5.0",
     "nostr-tools": "^2.7.2",
     "pino": "^9.3.2",
     "ws": "^8.18.0"
