@@ -115,9 +115,3 @@ I proposed, facilitated, and developed the entire project.
 ### License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-### Acknowledgements
-
-- [AT Protocol API](https://github.com/bluesky-social/atproto)
-- [ws](https://github.com/websockets/ws)
-- [masto](https://github.com/neet/masto.js)
