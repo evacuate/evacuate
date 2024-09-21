@@ -98,10 +98,19 @@ MASTODON_ACCESS_TOKEN="example"
 
 ### Contributing
 
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Commit your changes and push to your fork.
-4. Open a pull request to the main repository.
+Contributions Welcome! You can contribute in the following ways.
+
+- Create an issue - propose a new feature. Report a bug
+- Pull Request - Fix a bug or typo Refactoring the code
+- Share - Share your thoughts on blogs, Twitter, etc.
+
+For more details, see [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
+
+### Author
+
+I proposed, facilitated, and developed the entire project.
+
+- Minagishl ([@minagishl](https://github.com/minagishl))
 
 ### License
 
