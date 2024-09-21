@@ -6,6 +6,7 @@ import { Relay, useWebSocketImplementation } from 'nostr-tools/relay';
 import nrPino from '@newrelic/pino-enricher';
 import pino from 'pino';
 import WebSocket from 'ws';
+import https from 'node:https';
 import env from '../env';
 
 useWebSocketImplementation(WebSocket);
@@ -48,6 +49,53 @@ export default async function messageSend(
       status: text,
       visibility: 'public',
     });
+  }
+
+  // Post to Webhook
+  if (env.WEBHOOK_URL !== undefined) {
+    try {
+      const url = new URL(env.WEBHOOK_URL);
+
+      // Setting options for POST data
+      const options = {
+        hostname: url.hostname,
+        path: url.pathname,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      // Create a request
+      const req = https.request(options, (res) => {
+        let data = '';
+
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+
+        res.on('end', () => {
+          logger.info(`Webhook status code: ${res.statusCode}`);
+        });
+      });
+
+      req.on('error', (e) => {
+        logger.error(`Error during webhook message send: ${e.message}`);
+      });
+
+      // Data to be sent to Webhook
+      const payload = JSON.stringify({
+        content: text.replace('#evacuate', ''),
+      });
+
+      // Write data to request
+      req.write(payload);
+      req.end();
+
+      logger.info('Message successfully sent to webhook');
+    } catch (webhookError) {
+      logger.error('Error during webhook message send:', webhookError);
+    }
   }
 
   if (env.NOSTR_PRIVATE_KEY !== undefined) {
