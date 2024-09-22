@@ -4,8 +4,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 interface Env {
-  BLUESKY_EMAIL: string;
-  BLUESKY_PASSWORD: string;
+  BLUESKY_EMAIL?: string | undefined;
+  BLUESKY_PASSWORD?: string | undefined;
   MASTODON_URL?: string | undefined;
   MASTODON_ACCESS_TOKEN?: string | undefined;
   NODE_ENV?: 'development' | 'production';
@@ -13,18 +13,9 @@ interface Env {
   WEBHOOK_URL?: string | undefined;
 }
 
-function validateEnvVar(name: string): string {
-  const value = process.env[name];
-  if (value === undefined) {
-    throw new Error(`Environment variable ${name} is not set`);
-  }
-
-  return value;
-}
-
 const env: Env = {
-  BLUESKY_EMAIL: validateEnvVar('BLUESKY_EMAIL'),
-  BLUESKY_PASSWORD: validateEnvVar('BLUESKY_PASSWORD'),
+  BLUESKY_EMAIL: process.env.BLUESKY_EMAIL,
+  BLUESKY_PASSWORD: process.env.BLUESKY_PASSWORD,
   MASTODON_URL: process.env.MASTODON_URL,
   MASTODON_ACCESS_TOKEN: process.env.MASTODON_ACCESS_TOKEN,
   NODE_ENV: process.env.NODE_ENV as 'development' | 'production',

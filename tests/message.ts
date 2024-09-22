@@ -1,16 +1,16 @@
 import { test } from 'vitest';
 
 // Import Helper Functions
-import parsePoints from '../src/helpers/parsePoints';
-import parseScale from '../src/helpers/parseScale';
-import parseCode from '../src/helpers/parseCode';
-import parseArea from '../src/helpers/parseArea';
+import parsePoints from '../src/parsers/points';
+import parseScale from '../src/parsers/scale';
+import parseCode from '../src/parsers/code';
+import parseArea from '../src/parsers/area';
 
 // Import Message Functions
 import {
-  createMessage,
+  createEarthquakeMessage,
   createTsunamiMessage,
-} from '../src/helpers/messageCreator';
+} from '../src/messages/create';
 
 // Import Example Data
 import { message, tsunami } from './example';
@@ -24,7 +24,7 @@ test('message', async ({ expect }) => {
   const parsedScale = parseScale(maxScale);
 
   if (parsedScale !== undefined) {
-    const message = createMessage(
+    const message = createEarthquakeMessage(
       time,
       earthQuakeInfo,
       parsedScale,
@@ -49,7 +49,7 @@ test('message 1', async ({ expect }) => {
   const parsedScale = parseScale(maxScale);
 
   if (parsedScale !== undefined) {
-    const message = createMessage(
+    const message = createEarthquakeMessage(
       time,
       earthQuakeInfo,
       parsedScale,

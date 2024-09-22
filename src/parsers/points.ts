@@ -1,5 +1,5 @@
 import translate from '../translate';
-import parseScale from './parseScale';
+import parseScale from './scale';
 
 interface Point {
   pref: string;

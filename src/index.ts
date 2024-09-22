@@ -4,23 +4,17 @@ import pino from 'pino';
 import WebSocket from 'ws';
 import env from './env';
 
-// Import Helper Functions
-import parseArea from './helpers/parseArea';
-import parseCode from './helpers/parseCode';
-import parsePoints from './helpers/parsePoints';
-import parseScale from './helpers/parseScale';
-
-// Import Message Functions
-import { createMessage, createTsunamiMessage } from './helpers/messageCreator';
-import messageSend from './helpers/messageSend';
+// Import other proprietary functions
+import { handleEarthquake, handleTsunami } from './messages/handle';
+import { availableServices } from './services';
 
 // Import Types
 import type { JMAQuake, JMATsunami } from './types';
 
 const logger = pino(nrPino());
 
-const BLUESKY_EMAIL: string = env.BLUESKY_EMAIL;
-const BLUESKY_PASSWORD: string = env.BLUESKY_PASSWORD;
+const BLUESKY_EMAIL = env.BLUESKY_EMAIL;
+const BLUESKY_PASSWORD = env.BLUESKY_PASSWORD;
 const NODE_ENV: 'development' | 'production' = env.NODE_ENV ?? 'development';
 
 const isDev: boolean = NODE_ENV === 'development';
@@ -34,17 +28,22 @@ let isFirstRun = true; // Flag to check if it's the initial run
 
 async function initWebSocket(): Promise<void> {
   try {
-    await agent.login({
-      identifier: BLUESKY_EMAIL,
-      password: BLUESKY_PASSWORD,
-    });
+    if (BLUESKY_EMAIL !== undefined && BLUESKY_PASSWORD !== undefined) {
+      await agent.login({
+        identifier: BLUESKY_EMAIL,
+        password: BLUESKY_PASSWORD,
+      });
+    }
 
-    if (agent.session !== undefined) {
-      if (isFirstRun) {
-        logger.info('Logged in successfully.');
-        logger.info(`Now running in ${NODE_ENV} mode.`);
-        isFirstRun = false; // Set the flag to false after the first run
-      }
+    // Log the services that are available
+    logger.info(
+      `Make a submission for the following services: ${availableServices().join(', ')}`,
+    );
+
+    if (agent.session !== undefined && isFirstRun) {
+      logger.info('Logged in successfully.');
+      logger.info(`Now running in ${NODE_ENV} mode.`);
+      isFirstRun = false; // Set the flag to false after the first run
     }
 
     const url = isDev
@@ -70,7 +69,7 @@ async function initWebSocket(): Promise<void> {
       onClose(events.code, events.reason);
     };
   } catch (error) {
-    logger.error('Error during login or WebSocket initialization:', error);
+    logger.error('Error during login or WebSocket initialization: ', error);
   }
 }
 
@@ -85,50 +84,17 @@ function onMessage(message: WebSocket.Data): void {
     | JMAQuake
     | JMATsunami;
 
-  // Asynchronous processing
-  processMessage(earthQuakeData).catch(logger.error);
-}
-
-async function processMessage(
-  earthQuakeData: JMAQuake | JMATsunami,
-): Promise<void> {
-  const code = earthQuakeData.code;
-
-  // Output the status code to the log
-  logger.info(`Received message with status code: ${code}`);
-
-  if (code === 551) {
-    const info = parseCode(code);
-    const points = parsePoints(earthQuakeData.points);
-    const earthQuake = earthQuakeData.earthquake;
-    const time = earthQuake.time;
-    const maxScale = earthQuake.maxScale;
-    const scale = parseScale(maxScale ?? -1);
-
-    if (scale !== undefined) {
-      const text = createMessage(time, info, scale, points, isDev);
-      void messageSend(text, agent);
-
-      logger.info('Earthquake alert received and posted successfully.');
-    } else {
-      logger.warn('Earthquake scale is undefined.');
-    }
-  } else if (code === 552) {
-    const info = parseCode(code);
-    const area = parseArea(earthQuakeData.areas);
-    const areaResult: string = area.join(', ');
-    const time = earthQuakeData.time.replace(/\.\d+$/, '');
-
-    if (area.length > 0) {
-      const text = createTsunamiMessage(time, info, areaResult, isDev);
-      void messageSend(text, agent);
-
-      logger.info('Tsunami alert received and posted successfully.');
-    } else {
-      logger.warn('Tsunami area is undefined.');
-    }
+  if (earthQuakeData.code === 551) {
+    handleEarthquake(earthQuakeData as JMAQuake, agent, isDev);
+  } else if (earthQuakeData.code === 552) {
+    handleTsunami(earthQuakeData as JMATsunami, agent, isDev);
   } else {
-    if (isDev) logger.warn('Unknown message code:', code);
+    if (isDev) {
+      logger.warn(
+        'Unknown message code: ',
+        (earthQuakeData as JMAQuake | JMATsunami).code,
+      );
+    }
   }
 }
 

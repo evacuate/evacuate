@@ -1,12 +1,12 @@
+import https from 'node:https';
 import { type AtpAgent, RichText } from '@atproto/api';
+import nrPino from '@newrelic/pino-enricher';
 import { createRestAPIClient } from 'masto';
 import * as nip19 from 'nostr-tools/nip19';
 import { finalizeEvent, getPublicKey } from 'nostr-tools/pure';
 import { Relay, useWebSocketImplementation } from 'nostr-tools/relay';
-import nrPino from '@newrelic/pino-enricher';
 import pino from 'pino';
 import WebSocket from 'ws';
-import https from 'node:https';
 import env from '../env';
 
 useWebSocketImplementation(WebSocket);
@@ -24,31 +24,33 @@ const NOSTR_RELAYS = [
   // Add as needed
 ];
 
-export default async function messageSend(
+export default async function sendMessage(
   text: string,
-  agent: AtpAgent,
+  agent: AtpAgent | undefined,
 ): Promise<void> {
   // Post to Bluesky
-  const rt = new RichText({ text });
-  await rt.detectFacets(agent);
+  if (agent?.session !== undefined) {
+    const rt = new RichText({ text });
+    await rt.detectFacets(agent);
 
-  await agent.post({
-    text: rt.text,
-    facets: rt.facets,
-    langs: ['en', 'ja'],
-  });
-
-  if (env.MASTODON_ACCESS_TOKEN !== undefined) {
-    const masto = createRestAPIClient({
-      url: MASTODON_URL,
-      accessToken: env.MASTODON_ACCESS_TOKEN,
+    await agent.post({
+      text: rt.text,
+      facets: rt.facets,
+      langs: ['en', 'ja'],
     });
 
-    // Post to Mastodon
-    await masto.v1.statuses.create({
-      status: text,
-      visibility: 'public',
-    });
+    if (env.MASTODON_ACCESS_TOKEN !== undefined) {
+      const masto = createRestAPIClient({
+        url: MASTODON_URL,
+        accessToken: env.MASTODON_ACCESS_TOKEN,
+      });
+
+      // Post to Mastodon
+      await masto.v1.statuses.create({
+        status: text,
+        visibility: 'public',
+      });
+    }
   }
 
   // Post to Webhook
