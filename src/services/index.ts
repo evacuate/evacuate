@@ -1,6 +1,6 @@
 import env from '../env';
 
-export default function services(): string[] {
+export function availableServices(): string[] {
   const serviceConditions: { [key: string]: boolean } = {
     Bluesky:
       env.BLUESKY_EMAIL !== undefined && env.BLUESKY_PASSWORD !== undefined,

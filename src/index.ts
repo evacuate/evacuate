@@ -5,15 +5,20 @@ import WebSocket from 'ws';
 import env from './env';
 
 // Import Helper Functions
-import parseArea from './helpers/parseArea';
-import parseCode from './helpers/parseCode';
-import parsePoints from './helpers/parsePoints';
-import parseScale from './helpers/parseScale';
-import services from './helpers/services';
+import parseArea from './parsers/area';
+import parseCode from './parsers/code';
+import parsePoints from './parsers/points';
+import parseScale from './parsers/scale';
 
 // Import Message Functions
-import { createMessage, createTsunamiMessage } from './helpers/messageCreator';
-import messageSend from './helpers/messageSend';
+import {
+  createEarthquakeMessage,
+  createTsunamiMessage,
+} from './messages/create';
+import sendMessage from './messages/send';
+
+// Services
+import { availableServices } from './services';
 
 // Import Types
 import type { JMAQuake, JMATsunami } from './types';
@@ -44,7 +49,7 @@ async function initWebSocket(): Promise<void> {
 
     // Log the services that are available
     logger.info(
-      `Make a submission for the following services: ${services().join(', ')}`,
+      `Make a submission for the following services: ${availableServices().join(', ')}`,
     );
 
     if (agent.session !== undefined && isFirstRun) {
@@ -112,8 +117,8 @@ async function processMessage(
     const scale = parseScale(maxScale ?? -1);
 
     if (scale !== undefined) {
-      const text = createMessage(time, info, scale, points, isDev);
-      void messageSend(text, agent);
+      const text = createEarthquakeMessage(time, info, scale, points, isDev);
+      void sendMessage(text, agent);
 
       logger.info('Earthquake alert received and posted successfully.');
     } else {
@@ -127,7 +132,7 @@ async function processMessage(
 
     if (area.length > 0) {
       const text = createTsunamiMessage(time, info, areaResult, isDev);
-      void messageSend(text, agent);
+      void sendMessage(text, agent);
 
       logger.info('Tsunami alert received and posted successfully.');
     } else {

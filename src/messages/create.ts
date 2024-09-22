@@ -1,4 +1,4 @@
-function createBaseMessage(
+function createMessageBody(
   time: string,
   info: string | undefined,
   body: string[],
@@ -15,7 +15,7 @@ function createBaseMessage(
   return message.join('\n');
 }
 
-export function createMessage(
+export function createEarthquakeMessage(
   time: string,
   info: string | undefined,
   scale: string,
@@ -24,7 +24,7 @@ export function createMessage(
 ): string {
   const body = [`Maximum Seismic Intensity ${scale}`, '', `${points}`];
 
-  return createBaseMessage(time, info, body, isDev);
+  return createMessageBody(time, info, body, isDev);
 }
 
 export function createTsunamiMessage(
@@ -39,5 +39,5 @@ export function createTsunamiMessage(
     `${area}`,
   ];
 
-  return createBaseMessage(time, info, body, isDev);
+  return createMessageBody(time, info, body, isDev);
 }

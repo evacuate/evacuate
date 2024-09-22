@@ -24,7 +24,7 @@ const NOSTR_RELAYS = [
   // Add as needed
 ];
 
-export default async function messageSend(
+export default async function sendMessage(
   text: string,
   agent: AtpAgent | undefined,
 ): Promise<void> {
