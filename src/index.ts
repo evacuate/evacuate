@@ -9,6 +9,7 @@ import parseArea from './helpers/parseArea';
 import parseCode from './helpers/parseCode';
 import parsePoints from './helpers/parsePoints';
 import parseScale from './helpers/parseScale';
+import services from './helpers/services';
 
 // Import Message Functions
 import { createMessage, createTsunamiMessage } from './helpers/messageCreator';
@@ -19,8 +20,8 @@ import type { JMAQuake, JMATsunami } from './types';
 
 const logger = pino(nrPino());
 
-const BLUESKY_EMAIL: string = env.BLUESKY_EMAIL;
-const BLUESKY_PASSWORD: string = env.BLUESKY_PASSWORD;
+const BLUESKY_EMAIL = env.BLUESKY_EMAIL;
+const BLUESKY_PASSWORD = env.BLUESKY_PASSWORD;
 const NODE_ENV: 'development' | 'production' = env.NODE_ENV ?? 'development';
 
 const isDev: boolean = NODE_ENV === 'development';
@@ -34,10 +35,17 @@ let isFirstRun = true; // Flag to check if it's the initial run
 
 async function initWebSocket(): Promise<void> {
   try {
-    await agent.login({
-      identifier: BLUESKY_EMAIL,
-      password: BLUESKY_PASSWORD,
-    });
+    if (BLUESKY_EMAIL !== undefined && BLUESKY_PASSWORD !== undefined) {
+      await agent.login({
+        identifier: BLUESKY_EMAIL,
+        password: BLUESKY_PASSWORD,
+      });
+    }
+
+    // Log the services that are available
+    logger.info(
+      `Make a submission for the following services: ${services().join(', ')}`,
+    );
 
     if (agent.session !== undefined) {
       if (isFirstRun) {

@@ -26,29 +26,31 @@ const NOSTR_RELAYS = [
 
 export default async function messageSend(
   text: string,
-  agent: AtpAgent,
+  agent: AtpAgent | undefined,
 ): Promise<void> {
   // Post to Bluesky
-  const rt = new RichText({ text });
-  await rt.detectFacets(agent);
+  if (agent !== undefined) {
+    const rt = new RichText({ text });
+    await rt.detectFacets(agent);
 
-  await agent.post({
-    text: rt.text,
-    facets: rt.facets,
-    langs: ['en', 'ja'],
-  });
-
-  if (env.MASTODON_ACCESS_TOKEN !== undefined) {
-    const masto = createRestAPIClient({
-      url: MASTODON_URL,
-      accessToken: env.MASTODON_ACCESS_TOKEN,
+    await agent.post({
+      text: rt.text,
+      facets: rt.facets,
+      langs: ['en', 'ja'],
     });
 
-    // Post to Mastodon
-    await masto.v1.statuses.create({
-      status: text,
-      visibility: 'public',
-    });
+    if (env.MASTODON_ACCESS_TOKEN !== undefined) {
+      const masto = createRestAPIClient({
+        url: MASTODON_URL,
+        accessToken: env.MASTODON_ACCESS_TOKEN,
+      });
+
+      // Post to Mastodon
+      await masto.v1.statuses.create({
+        status: text,
+        visibility: 'public',
+      });
+    }
   }
 
   // Post to Webhook
