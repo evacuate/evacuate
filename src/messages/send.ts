@@ -29,7 +29,7 @@ export default async function sendMessage(
   agent: AtpAgent | undefined,
 ): Promise<void> {
   // Post to Bluesky
-  if (agent !== undefined) {
+  if (agent?.session !== undefined) {
     const rt = new RichText({ text });
     await rt.detectFacets(agent);
 
