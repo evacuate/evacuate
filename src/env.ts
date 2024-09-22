@@ -11,6 +11,8 @@ interface Env {
   NODE_ENV?: 'development' | 'production';
   NOSTR_PRIVATE_KEY?: string | undefined;
   WEBHOOK_URL?: string | undefined;
+  SLACK_BOT_TOKEN?: string | undefined;
+  SLACK_CHANNEL_ID?: string | undefined;
 }
 
 const env: Env = {
@@ -21,6 +23,8 @@ const env: Env = {
   NODE_ENV: process.env.NODE_ENV as 'development' | 'production',
   NOSTR_PRIVATE_KEY: process.env.NOSTR_PRIVATE_KEY,
   WEBHOOK_URL: process.env.WEBHOOK_URL,
+  SLACK_BOT_TOKEN: process.env.SLACK_BOT_TOKEN,
+  SLACK_CHANNEL_ID: process.env.SLACK_CHANNEL_ID,
 };
 
 export default env;

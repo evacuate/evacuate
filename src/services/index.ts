@@ -7,6 +7,8 @@ export function availableServices(): string[] {
     Mastodon: env.MASTODON_ACCESS_TOKEN !== undefined,
     Nostr: env.NOSTR_PRIVATE_KEY !== undefined,
     Webhook: env.WEBHOOK_URL !== undefined,
+    Slack:
+      env.SLACK_BOT_TOKEN !== undefined && env.SLACK_CHANNEL_ID !== undefined,
   };
 
   return Object.keys(serviceConditions).filter(
