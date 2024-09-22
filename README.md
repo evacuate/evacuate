@@ -12,7 +12,7 @@
 
 ### Prerequisites
 
-- Node.js (version 16 or later)
+- Node.js (version 20 or higher)
 - yarn (or yarn, although this project prefers yarn)
 
 ### Installation
