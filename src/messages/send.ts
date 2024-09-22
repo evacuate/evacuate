@@ -1,3 +1,4 @@
+import { WebClient } from '@slack/web-api';
 import https from 'node:https';
 import { type AtpAgent, RichText } from '@atproto/api';
 import nrPino from '@newrelic/pino-enricher';
@@ -12,7 +13,7 @@ import env from '../env';
 useWebSocketImplementation(WebSocket);
 
 const logger = pino(nrPino());
-
+const slackClient = new WebClient(env.SLACK_BOT_TOKEN); // Slack Web API Client
 const MASTODON_URL: string = env.MASTODON_URL ?? 'https://mastodon.social';
 
 // Define a list of relays
@@ -97,6 +98,55 @@ export default async function sendMessage(
       logger.info('Message successfully sent to webhook');
     } catch (webhookError) {
       logger.error('Error during webhook message send:', webhookError);
+    }
+  }
+
+  // Post to Slack
+  if (env.SLACK_BOT_TOKEN !== undefined && env.SLACK_CHANNEL_ID !== undefined) {
+    const lines = text.split('\n').filter((line) => line.trim() !== '');
+
+    const maxLine = lines.find((line) =>
+      line.startsWith('Maximum Seismic Intensity'),
+    );
+    const max = maxLine
+      ? Number.parseInt(maxLine.replace('Maximum Seismic Intensity ', ''), 10)
+      : null;
+
+    const area = new Map<string, string>();
+
+    for (const line of lines.slice(2)) {
+      const match = line.match(/\[Seismic Intensity (\d)\] (.+)/);
+      if (match) {
+        const intensity = match[1];
+        const regions = match[2];
+        area.set(intensity, regions);
+      }
+    }
+
+    const attachments = [
+      {
+        fallback: `${lines[0]}: Maximum Seismic Intensity ${max}`,
+        color: '#228BFF',
+        title: lines[0],
+        text: `Maximum Seismic Intensity ${max}`,
+        fields: [
+          ...Array.from(area.entries()).map(([intensity, regions]) => ({
+            title: `Seismic Intensity ${intensity}`,
+            value: regions,
+            short: true,
+          })),
+        ],
+      },
+    ];
+
+    try {
+      await slackClient.chat.postMessage({
+        channel: env.SLACK_CHANNEL_ID,
+        attachments: attachments,
+      });
+      logger.info('Message successfully sent to Slack');
+    } catch (slackError) {
+      logger.error('Error during Slack message send:', slackError);
     }
   }
 
