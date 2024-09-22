@@ -1,13 +1,13 @@
-import { createEarthquakeMessage, createTsunamiMessage } from './create';
-import sendMessage from './send';
+import type { AtpAgent } from '@atproto/api';
+import nrPino from '@newrelic/pino-enricher';
+import pino from 'pino';
 import parseArea from '../parsers/area';
 import parseCode from '../parsers/code';
 import parsePoints from '../parsers/points';
 import parseScale from '../parsers/scale';
 import type { JMAQuake, JMATsunami } from '../types';
-import type { AtpAgent } from '@atproto/api';
-import nrPino from '@newrelic/pino-enricher';
-import pino from 'pino';
+import { createEarthquakeMessage, createTsunamiMessage } from './create';
+import sendMessage from './send';
 
 const logger = pino(nrPino());
 
