@@ -2,7 +2,9 @@
   "name": "evacuate",
   "version": "1.0.0",
   "description": "",
-  "keywords": ["evacuate"],
+  "keywords": [
+    "evacuate"
+  ],
   "homepage": "https://github.com/evacuate/evacuate#readme",
   "bugs": {
     "url": "https://github.com/evacuate/evacuate/issues"
@@ -34,7 +36,7 @@
     "masto": "^6.8.0",
     "newrelic": "^12.5.0",
     "nostr-tools": "^2.7.2",
-    "pino": "^9.4.0",
+    "pino": "9.4.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {
@@ -42,7 +44,7 @@
     "@types/node": "^22.5.5",
     "@types/ws": "^8.5.12",
     "dotenv": "^16.4.5",
-    "esbuild": "^0.23.1",
+    "esbuild": "^0.24.0",
     "tsx": "^4.19.1",
     "typescript": "^5.6.2",
     "vite-tsconfig-paths": "^5.0.1",

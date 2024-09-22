@@ -4,20 +4,8 @@ import pino from 'pino';
 import WebSocket from 'ws';
 import env from './env';
 
-// Import Helper Functions
-import parseArea from './parsers/area';
-import parseCode from './parsers/code';
-import parsePoints from './parsers/points';
-import parseScale from './parsers/scale';
-
-// Import Message Functions
-import {
-  createEarthquakeMessage,
-  createTsunamiMessage,
-} from './messages/create';
-import sendMessage from './messages/send';
-
-// Services
+// Import other proprietary functions
+import { handleEarthquake, handleTsunami } from './messages/handle';
 import { availableServices } from './services';
 
 // Import Types
@@ -81,7 +69,7 @@ async function initWebSocket(): Promise<void> {
       onClose(events.code, events.reason);
     };
   } catch (error) {
-    logger.error('Error during login or WebSocket initialization:', error);
+    logger.error('Error during login or WebSocket initialization: ', error);
   }
 }
 
@@ -96,50 +84,17 @@ function onMessage(message: WebSocket.Data): void {
     | JMAQuake
     | JMATsunami;
 
-  // Asynchronous processing
-  processMessage(earthQuakeData).catch(logger.error);
-}
-
-async function processMessage(
-  earthQuakeData: JMAQuake | JMATsunami,
-): Promise<void> {
-  const code = earthQuakeData.code;
-
-  // Output the status code to the log
-  logger.info(`Received message with status code: ${code}`);
-
-  if (code === 551) {
-    const info = parseCode(code);
-    const points = parsePoints(earthQuakeData.points);
-    const earthQuake = earthQuakeData.earthquake;
-    const time = earthQuake.time;
-    const maxScale = earthQuake.maxScale;
-    const scale = parseScale(maxScale ?? -1);
-
-    if (scale !== undefined) {
-      const text = createEarthquakeMessage(time, info, scale, points, isDev);
-      void sendMessage(text, agent);
-
-      logger.info('Earthquake alert received and posted successfully.');
-    } else {
-      logger.warn('Earthquake scale is undefined.');
-    }
-  } else if (code === 552) {
-    const info = parseCode(code);
-    const area = parseArea(earthQuakeData.areas);
-    const areaResult: string = area.join(', ');
-    const time = earthQuakeData.time.replace(/\.\d+$/, '');
-
-    if (area.length > 0) {
-      const text = createTsunamiMessage(time, info, areaResult, isDev);
-      void sendMessage(text, agent);
-
-      logger.info('Tsunami alert received and posted successfully.');
-    } else {
-      logger.warn('Tsunami area is undefined.');
-    }
+  if (earthQuakeData.code === 551) {
+    handleEarthquake(earthQuakeData as JMAQuake, agent, isDev);
+  } else if (earthQuakeData.code === 552) {
+    handleTsunami(earthQuakeData as JMATsunami, agent, isDev);
   } else {
-    if (isDev) logger.warn('Unknown message code:', code);
+    if (isDev) {
+      logger.warn(
+        'Unknown message code: ',
+        (earthQuakeData as JMAQuake | JMATsunami).code,
+      );
+    }
   }
 }
 
