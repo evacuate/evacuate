@@ -1,12 +1,12 @@
+import https from 'node:https';
 import { type AtpAgent, RichText } from '@atproto/api';
+import nrPino from '@newrelic/pino-enricher';
 import { createRestAPIClient } from 'masto';
 import * as nip19 from 'nostr-tools/nip19';
 import { finalizeEvent, getPublicKey } from 'nostr-tools/pure';
 import { Relay, useWebSocketImplementation } from 'nostr-tools/relay';
-import nrPino from '@newrelic/pino-enricher';
 import pino from 'pino';
 import WebSocket from 'ws';
-import https from 'node:https';
 import env from '../env';
 
 useWebSocketImplementation(WebSocket);
