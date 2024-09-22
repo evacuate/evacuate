@@ -29,24 +29,24 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@atproto/api": "^0.13.5",
+    "@atproto/api": "^0.13.7",
     "@newrelic/pino-enricher": "^1.1.1",
     "masto": "^6.8.0",
     "newrelic": "^12.5.0",
     "nostr-tools": "^2.7.2",
-    "pino": "^9.3.2",
+    "pino": "^9.4.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.8.3",
-    "@types/node": "^22.5.2",
+    "@biomejs/biome": "1.9.2",
+    "@types/node": "^22.5.5",
     "@types/ws": "^8.5.12",
     "dotenv": "^16.4.5",
     "esbuild": "^0.23.1",
-    "tsx": "^4.19.0",
-    "typescript": "^5.5.4",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2",
     "vite-tsconfig-paths": "^5.0.1",
-    "vitest": "^2.0.5"
+    "vitest": "^2.1.1"
   },
   "engines": {
     "node": "20.17.0"
