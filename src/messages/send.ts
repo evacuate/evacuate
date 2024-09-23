@@ -39,19 +39,20 @@ export default async function sendMessage(
       facets: rt.facets,
       langs: ['en', 'ja'],
     });
+  }
 
-    if (env.MASTODON_ACCESS_TOKEN !== undefined) {
-      const masto = createRestAPIClient({
-        url: MASTODON_URL,
-        accessToken: env.MASTODON_ACCESS_TOKEN,
-      });
+  // Post to Mastodon
+  if (env.MASTODON_ACCESS_TOKEN !== undefined) {
+    const masto = createRestAPIClient({
+      url: MASTODON_URL,
+      accessToken: env.MASTODON_ACCESS_TOKEN,
+    });
 
-      // Post to Mastodon
-      await masto.v1.statuses.create({
-        status: text,
-        visibility: 'public',
-      });
-    }
+    // Post to Mastodon
+    await masto.v1.statuses.create({
+      status: text,
+      visibility: 'public',
+    });
   }
 
   // Post to Webhook
