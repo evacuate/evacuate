@@ -1,5 +1,7 @@
 import type { MessageAttachment } from '@slack/web-api';
 
+const SLACK_MESSAGE_COLOR = '#228BFF';
+
 function createMessageBody(
   time: string,
   info: string | undefined,
@@ -68,7 +70,7 @@ export function createSlackMessage(text: string): MessageAttachment[] {
   const attachments: MessageAttachment[] = [
     {
       fallback: `${lines[0]}: Maximum Seismic Intensity ${max}`,
-      color: '#228BFF',
+      color: SLACK_MESSAGE_COLOR,
       title: lines[0],
       text: `Maximum Seismic Intensity ${max}`,
       fields: [
