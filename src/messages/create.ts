@@ -1,3 +1,5 @@
+import type { MessageAttachment } from '@slack/web-api';
+
 function createMessageBody(
   time: string,
   info: string | undefined,
@@ -40,4 +42,44 @@ export function createTsunamiMessage(
   ];
 
   return createMessageBody(time, info, body, isDev);
+}
+
+export function createSlackMessage(text: string): MessageAttachment[] {
+  const lines = text.split('\n').filter((line) => line.trim() !== '');
+
+  const maxLine = lines.find((line) =>
+    line.startsWith('Maximum Seismic Intensity'),
+  );
+  const max = maxLine
+    ? Number.parseInt(maxLine.replace('Maximum Seismic Intensity ', ''), 10)
+    : null;
+
+  const area = new Map<string, string>();
+
+  for (const line of lines.slice(2)) {
+    const match = line.match(/\[Seismic Intensity (\d)\] (.+)/);
+    if (match) {
+      const intensity = match[1];
+      const regions = match[2];
+      area.set(intensity, regions);
+    }
+  }
+
+  const attachments: MessageAttachment[] = [
+    {
+      fallback: `${lines[0]}: Maximum Seismic Intensity ${max}`,
+      color: '#228BFF',
+      title: lines[0],
+      text: `Maximum Seismic Intensity ${max}`,
+      fields: [
+        ...Array.from(area.entries()).map(([intensity, regions]) => ({
+          title: `Seismic Intensity ${intensity}`,
+          value: regions,
+          short: true,
+        })),
+      ],
+    },
+  ];
+
+  return attachments;
 }
