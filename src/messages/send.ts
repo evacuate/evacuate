@@ -3,7 +3,7 @@ import https from 'node:https';
 import { type AtpAgent, RichText } from '@atproto/api';
 import nrPino from '@newrelic/pino-enricher';
 import { createRestAPIClient } from 'masto';
-import * as nip19 from 'nostr-tools/nip19';
+import { decode } from 'nostr-tools/nip19';
 import { finalizeEvent, getPublicKey } from 'nostr-tools/pure';
 import { Relay, useWebSocketImplementation } from 'nostr-tools/relay';
 import pino from 'pino';
@@ -154,7 +154,7 @@ export default async function sendMessage(
   if (env.NOSTR_PRIVATE_KEY !== undefined) {
     try {
       // Post to Nostr
-      const decodeResult = nip19.decode(env.NOSTR_PRIVATE_KEY);
+      const decodeResult = decode(env.NOSTR_PRIVATE_KEY);
       const sk = decodeResult.data as Uint8Array;
       const pk = getPublicKey(sk);
 
