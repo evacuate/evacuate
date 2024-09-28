@@ -47,14 +47,32 @@ export function createTsunamiMessage(
 }
 
 export function createSlackMessage(text: string): MessageAttachment[] {
+  if (!text.trim()) {
+    throw new Error('Input text is empty or whitespace');
+  }
+
   const lines = text.split('\n').filter((line) => line.trim() !== '');
+
+  if (lines.length === 0) {
+    throw new Error('No valid lines found in input text');
+  }
 
   const maxLine = lines.find((line) =>
     line.startsWith('Maximum Seismic Intensity'),
   );
-  const max = maxLine
-    ? Number.parseInt(maxLine.replace('Maximum Seismic Intensity ', ''), 10)
-    : null;
+
+  if (!maxLine) {
+    throw new Error('Maximum Seismic Intensity information not found');
+  }
+
+  const max = Number.parseInt(
+    maxLine.replace('Maximum Seismic Intensity ', ''),
+    10,
+  );
+
+  if (Number.isNaN(max)) {
+    throw new Error('Invalid Maximum Seismic Intensity value');
+  }
 
   const area = new Map<string, string>();
 
