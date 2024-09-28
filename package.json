@@ -29,18 +29,18 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@atproto/api": "^0.13.7",
+    "@atproto/api": "^0.13.8",
     "@newrelic/pino-enricher": "^1.1.1",
     "@slack/web-api": "^7.5.0",
     "masto": "^6.8.0",
-    "newrelic": "^12.5.0",
+    "newrelic": "^12.5.1",
     "nostr-tools": "^2.7.2",
     "pino": "9.4.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.2",
-    "@types/node": "^22.5.5",
+    "@types/node": "^22.7.4",
     "@types/ws": "^8.5.12",
     "dotenv": "^16.4.5",
     "esbuild": "^0.24.0",
