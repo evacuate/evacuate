@@ -1,19 +1,17 @@
 import { WebClient } from '@slack/web-api';
 import https from 'node:https';
 import { type AtpAgent, RichText } from '@atproto/api';
-import nrPino from '@newrelic/pino-enricher';
 import { createRestAPIClient } from 'masto';
 import { decode } from 'nostr-tools/nip19';
 import { finalizeEvent, getPublicKey } from 'nostr-tools/pure';
 import { Relay, useWebSocketImplementation } from 'nostr-tools/relay';
-import pino from 'pino';
 import WebSocket from 'ws';
 import env from '../env';
 import { createSlackMessage } from './create';
+import { getLogger } from '..';
 
 useWebSocketImplementation(WebSocket);
 
-const logger = pino(nrPino());
 const slackClient = new WebClient(env.SLACK_BOT_TOKEN); // Slack Web API Client
 const MASTODON_URL: string = env.MASTODON_URL ?? 'https://mastodon.social';
 
@@ -30,6 +28,8 @@ export default async function sendMessage(
   text: string,
   agent: AtpAgent | undefined,
 ): Promise<void> {
+  const logger = await getLogger();
+
   // Post to Bluesky
   if (agent?.session !== undefined) {
     const rt = new RichText({ text });

@@ -1,6 +1,4 @@
 import type { AtpAgent } from '@atproto/api';
-import nrPino from '@newrelic/pino-enricher';
-import pino from 'pino';
 import parseArea from '../parsers/area';
 import parseCode from '../parsers/code';
 import parsePoints from '../parsers/points';
@@ -8,14 +6,16 @@ import parseScale from '../parsers/scale';
 import type { JMAQuake, JMATsunami } from '../types';
 import { createEarthquakeMessage, createTsunamiMessage } from './create';
 import sendMessage from './send';
-
-const logger = pino(nrPino());
+import { getLogger } from '..';
 
 export async function handleEarthquake(
   earthquakeData: JMAQuake,
   agent: AtpAgent,
   isDev: boolean,
 ): Promise<void> {
+  // Get the logger
+  const logger = await getLogger();
+
   const code = earthquakeData.code;
   const info = parseCode(code);
   const points = parsePoints(earthquakeData.points);
@@ -38,6 +38,9 @@ export async function handleTsunami(
   agent: AtpAgent,
   isDev: boolean,
 ): Promise<void> {
+  // Get the logger
+  const logger = await getLogger();
+
   const code = tsunamiData.code;
   const info = parseCode(code);
   const area = parseArea(tsunamiData.areas);

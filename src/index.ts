@@ -1,5 +1,4 @@
 import { AtpAgent } from '@atproto/api';
-import nrPino from '@newrelic/pino-enricher';
 import pino from 'pino';
 import WebSocket from 'ws';
 import env from './env';
@@ -10,8 +9,6 @@ import { availableServices } from './services';
 
 // Import Types
 import type { JMAQuake, JMATsunami } from './types';
-
-const logger = pino(nrPino());
 
 const BLUESKY_EMAIL = env.BLUESKY_EMAIL;
 const BLUESKY_PASSWORD = env.BLUESKY_PASSWORD;
@@ -26,6 +23,20 @@ const agent = new AtpAgent({
 const RECONNECT_DELAY: number = 5000; // 5 seconds
 let isFirstRun = true; // Flag to check if it's the initial run
 
+async function initLogger() {
+  if (NODE_ENV === 'production') {
+    const nrPino = (await import('@newrelic/pino-enricher')).default;
+    return pino(nrPino());
+  }
+  return pino();
+}
+
+const loggerPromise = initLogger();
+
+export async function getLogger() {
+  return await loggerPromise;
+}
+
 async function initWebSocket(): Promise<void> {
   try {
     if (BLUESKY_EMAIL !== undefined && BLUESKY_PASSWORD !== undefined) {
@@ -36,6 +47,7 @@ async function initWebSocket(): Promise<void> {
     }
 
     // Log the services that are available
+    const logger = await getLogger();
     logger.info(
       `Make a submission for the following services: ${availableServices().join(', ')}`,
     );
@@ -69,6 +81,7 @@ async function initWebSocket(): Promise<void> {
       onClose(events.code, events.reason);
     };
   } catch (error) {
+    const logger = await getLogger();
     logger.error('Error during login or WebSocket initialization: ', error);
   }
 }
@@ -78,7 +91,8 @@ void (async () => {
   await initWebSocket();
 })();
 
-function onMessage(message: WebSocket.Data): void {
+async function onMessage(message: WebSocket.Data): Promise<void> {
+  const logger = await getLogger();
   if (isDev) logger.debug('Message received from server.');
   const earthQuakeData = JSON.parse(message.toString() as string) as
     | JMAQuake
@@ -98,11 +112,13 @@ function onMessage(message: WebSocket.Data): void {
   }
 }
 
-function onError(error: string): void {
+async function onError(error: string): Promise<void> {
+  const logger = await getLogger();
   logger.error('WebSocket connection error:', error);
 }
 
-function onClose(code: number, reason: string): void {
+async function onClose(code: number, reason: string): Promise<void> {
+  const logger = await getLogger();
   logger.info('WebSocket connection closed:', {
     code,
     reason: reason.toString(),
@@ -115,6 +131,7 @@ function onClose(code: number, reason: string): void {
   }, RECONNECT_DELAY);
 }
 
-function onOpen(): void {
+async function onOpen(): Promise<void> {
+  const logger = await getLogger();
   logger.info('WebSocket connection opened.');
 }
