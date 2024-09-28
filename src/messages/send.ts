@@ -105,16 +105,18 @@ export default async function sendMessage(
 
   // Post to Slack
   if (env.SLACK_BOT_TOKEN !== undefined && env.SLACK_CHANNEL_ID !== undefined) {
-    const attachments = createSlackMessage(text);
+    if (!text.includes('Tsunami')) {
+      const attachments = createSlackMessage(text);
 
-    try {
-      await slackClient.chat.postMessage({
-        channel: env.SLACK_CHANNEL_ID,
-        attachments: attachments,
-      });
-      logger.info('Message successfully sent to Slack');
-    } catch (slackError) {
-      logger.error('Error during Slack message send:', slackError);
+      try {
+        await slackClient.chat.postMessage({
+          channel: env.SLACK_CHANNEL_ID,
+          attachments: attachments,
+        });
+        logger.info('Message successfully sent to Slack');
+      } catch (slackError) {
+        logger.error('Error during Slack message send:', slackError);
+      }
     }
   }
 
