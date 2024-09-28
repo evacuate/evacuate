@@ -10,10 +10,14 @@ import parseArea from '../src/parsers/area';
 import {
   createEarthquakeMessage,
   createTsunamiMessage,
+  createSlackMessage,
 } from '../src/messages/create';
 
 // Import Example Data
 import { message, tsunami } from './example';
+
+let messageText = '';
+let message1Text = '';
 
 test('message', async ({ expect }) => {
   const earthQuakeInfo = parseCode(message[0].code);
@@ -24,7 +28,7 @@ test('message', async ({ expect }) => {
   const parsedScale = parseScale(maxScale);
 
   if (parsedScale !== undefined) {
-    const message = createEarthquakeMessage(
+    messageText = createEarthquakeMessage(
       time,
       earthQuakeInfo,
       parsedScale,
@@ -36,8 +40,37 @@ test('message', async ({ expect }) => {
     const expectedMessage =
       '2024/08/10 14:18:00 Earthquake Information\nMaximum Seismic Intensity 3\n\n[Seismic Intensity 1] Fukuoka, Nagasaki, Miyazaki\n[Seismic Intensity 3] Kumamoto\n#evacuate';
 
-    expect(message).toBe(expectedMessage);
+    expect(messageText).toBe(expectedMessage);
   }
+});
+
+test('slack message', async ({ expect }) => {
+  const slackMessage = createSlackMessage(messageText);
+
+  // Expected Messages
+  const expectedMessage = [
+    {
+      color: '#228BFF',
+      fallback:
+        '2024/08/10 14:18:00 Earthquake Information: Maximum Seismic Intensity 3',
+      fields: [
+        {
+          short: true,
+          title: 'Seismic Intensity 1',
+          value: 'Fukuoka, Nagasaki, Miyazaki',
+        },
+        {
+          short: true,
+          title: 'Seismic Intensity 3',
+          value: 'Kumamoto',
+        },
+      ],
+      text: 'Maximum Seismic Intensity 3',
+      title: '2024/08/10 14:18:00 Earthquake Information',
+    },
+  ];
+
+  expect(slackMessage).toEqual(expectedMessage);
 });
 
 test('message 1', async ({ expect }) => {
@@ -49,7 +82,7 @@ test('message 1', async ({ expect }) => {
   const parsedScale = parseScale(maxScale);
 
   if (parsedScale !== undefined) {
-    const message = createEarthquakeMessage(
+    message1Text = createEarthquakeMessage(
       time,
       earthQuakeInfo,
       parsedScale,
@@ -61,8 +94,42 @@ test('message 1', async ({ expect }) => {
     const expectedMessage =
       '2024/08/10 12:29:00 Earthquake Information\nMaximum Seismic Intensity 3\n\n[Seismic Intensity 1] Akita, Yamagata\n[Seismic Intensity 2] Miyagi\n[Seismic Intensity 3] Hokkaido, Aomori, Iwate\n#evacuate';
 
-    expect(message).toBe(expectedMessage);
+    expect(message1Text).toBe(expectedMessage);
   }
+});
+
+test('slack message 1', async ({ expect }) => {
+  const slackMessage = createSlackMessage(message1Text);
+
+  // Expected Messages
+  const expectedMessage = [
+    {
+      color: '#228BFF',
+      fallback:
+        '2024/08/10 12:29:00 Earthquake Information: Maximum Seismic Intensity 3',
+      fields: [
+        {
+          short: true,
+          title: 'Seismic Intensity 1',
+          value: 'Akita, Yamagata',
+        },
+        {
+          short: true,
+          title: 'Seismic Intensity 2',
+          value: 'Miyagi',
+        },
+        {
+          short: true,
+          title: 'Seismic Intensity 3',
+          value: 'Hokkaido, Aomori, Iwate',
+        },
+      ],
+      text: 'Maximum Seismic Intensity 3',
+      title: '2024/08/10 12:29:00 Earthquake Information',
+    },
+  ];
+
+  expect(slackMessage).toEqual(expectedMessage);
 });
 
 test('tsunami message', async ({ expect }) => {
