@@ -5,7 +5,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "lib": ["ES2015"],
-    "module": "ES2015",
+    "module": "ES2022",
     "moduleDetection": "auto",
     "moduleResolution": "Bundler",
     "declaration": false,
