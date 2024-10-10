@@ -96,7 +96,7 @@ MASTODON_ACCESS_TOKEN="example"
 
 3. The application will log in to the AT Protocol service and establish a WebSocket connection. It will then listen for earthquake data and post relevant information when an event is detected.
 
-### Contributing
+## Contributing
 
 Contributions Welcome! You can contribute in the following ways.
 
@@ -106,12 +106,12 @@ Contributions Welcome! You can contribute in the following ways.
 
 For more details, see [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
 
-### Author
+## Author
 
 I proposed, facilitated, and developed the entire project.
 
 - Minagishl ([@minagishl](https://github.com/minagishl))
 
-### License
+## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
