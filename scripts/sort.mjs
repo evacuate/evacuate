@@ -184,17 +184,22 @@ fs.readFile(packageJsonPath, "utf8", (err, data) => {
   // Stringify JSON with 2-space indentation
   let jsonString = JSON.stringify(sortedPackageJson, null, 2);
 
-  // Modify "keywords" to be single-line
-  const keywordsRegex = /("keywords":\s*)\[\s*\n([\s\S]*?)\s*\]/;
-  jsonString = jsonString.replace(keywordsRegex, (_, p1, p2) => {
-    // Split the keywords into individual lines, trim them, and join with ', '
-    const keywords = p2
-      .split("\n")
-      .map((line) => line.trim().replace(/,$/, ""))
-      .filter((line) => line.length > 0)
-      .join(", ");
-    return `${p1}[${keywords}]`;
-  });
+  // Modify "keywords" and "files" to be single-line
+  const arrayProperties = ["keywords", "files"];
+  for (const property of arrayProperties) {
+    const regex = new RegExp(
+      `("${property}":\\s*)\\[\\s*\\n([\\s\\S]*?)\\s*\\]`
+    );
+    jsonString = jsonString.replace(regex, (_, p1, p2) => {
+      // Split the array items into individual lines, trim them, and join with ', '
+      const items = p2
+        .split("\n")
+        .map((line) => line.trim().replace(/,$/, ""))
+        .filter((line) => line.length > 0)
+        .join(", ");
+      return `${p1}[${items}]`;
+    });
+  }
 
   // Write sorted content with a trailing newline
   fs.writeFile(
