@@ -38,7 +38,7 @@ jobs:
           fetch-depth: 0
 
       - name: Push to Dokku
-        uses: dokku/github-action@v1.5.0
+        uses: dokku/github-action@v1.6.0
         with:
           git_remote_url: ssh://dokku@${{ secrets.DOKKU_PREVIEW_HOST }}:${{ secrets.DOKKU_PREVIEW_PORT }}/${{ secrets.DOKKU_PREVIEW_APP_NAME }}
           ssh_private_key: ${{ secrets.DOKKU_PREVIEW_SSH_PRIVATE_KEY }}
