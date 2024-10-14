@@ -1,4 +1,4 @@
-import translate from '../translate';
+import translate from '@evacuate/translate';
 
 interface Area {
   name?: string;

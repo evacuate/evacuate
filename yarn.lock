@@ -472,6 +472,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.24.0.tgz#168ab1c7e1c318b922637fad8f339d48b01e1244"
   integrity sha512-7IAFPrjSQIJrGsK6flwg7NFmwBoSTyF3rl7If0hNUFQU4ilTsEPL6GuMuU9BfIWVVGuRnuIidkSMC+c0Otu8IA==
 
+"@evacuate/translate@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@evacuate/translate/-/translate-1.3.0.tgz#f2f10eab4f1cb8caa0ee17a3971a3a57d4a695ae"
+  integrity sha512-lUx/+XIeRVdnfGIqjcBd/wsxevRl8EQOOaqlCC8Iszn6/6AZ9/KfUPmKThB7/SQ0UfwXTfhIReZvvwdBMvX/qQ==
+
 "@grpc/grpc-js@^1.9.4":
   version "1.11.3"
   resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.11.3.tgz#a33a472618d166fbb195012ae390dbfc277470ed"

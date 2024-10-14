@@ -1,4 +1,4 @@
-import translate from '../translate';
+import translate from '@evacuate/translate';
 import parseScale from './scale';
 
 interface Point {
