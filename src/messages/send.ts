@@ -136,9 +136,10 @@ export default async function sendMessage(
         }),
       });
       if (response.ok) {
-        console.log('Message sent to Telegram successfully');
+        logger.info('Message successfully sent to Telegram');
       } else {
-        console.error('Failed to send message to Telegram');
+        const errorData = await response.json();
+        logger.error('Failed to send message to Telegram:', errorData);
       }
     } catch (error) {
       console.error('Error sending message to Telegram:', error);
