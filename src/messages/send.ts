@@ -145,7 +145,7 @@ export default async function sendMessage(
         logger.error('Failed to send message to Telegram:', errorData);
       }
     } catch (error) {
-      console.error('Error sending message to Telegram:', error);
+      logger.error('Error sending message to Telegram:', error);
     }
   }
 
