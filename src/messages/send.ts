@@ -133,6 +133,7 @@ export default async function sendMessage(
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(5000),
         body: JSON.stringify({
           chat_id: env.TELEGRAM_CHAT_ID,
           text: text.replace('#evacuate', ''),
