@@ -136,7 +136,7 @@ export default async function sendMessage(
         signal: AbortSignal.timeout(5000),
         body: JSON.stringify({
           chat_id: env.TELEGRAM_CHAT_ID,
-          text: text.replace('#evacuate', ''),
+          text: text.replace('#evacuate', '').slice(0, 4096),
         }),
       });
       if (response.ok) {
