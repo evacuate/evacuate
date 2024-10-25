@@ -13,8 +13,8 @@ interface Env {
   WEBHOOK_URL?: string | undefined;
   SLACK_BOT_TOKEN?: string | undefined;
   SLACK_CHANNEL_ID?: string | undefined;
-  TELEGRAM_BOT_TOKEN: string | undefined;
-  TELEGRAM_CHAT_ID: string | undefined;
+  TELEGRAM_BOT_TOKEN?: string | undefined;
+  TELEGRAM_CHAT_ID?: string | undefined;
 }
 
 const env: Env = {
