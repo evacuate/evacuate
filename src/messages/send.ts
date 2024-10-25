@@ -124,7 +124,10 @@ export default async function sendMessage(
     env.TELEGRAM_BOT_TOKEN !== undefined &&
     env.TELEGRAM_CHAT_ID !== undefined
   ) {
-    const url = `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`;
+    const url = new URL(
+      'sendMessage',
+      `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/`,
+    );
 
     try {
       const response = await fetch(url, {
