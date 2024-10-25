@@ -9,6 +9,9 @@ export function availableServices(): string[] {
     Webhook: env.WEBHOOK_URL !== undefined,
     Slack:
       env.SLACK_BOT_TOKEN !== undefined && env.SLACK_CHANNEL_ID !== undefined,
+    Telegram:
+      env.TELEGRAM_BOT_TOKEN !== undefined &&
+      env.TELEGRAM_CHAT_ID !== undefined,
   };
 
   return Object.keys(serviceConditions).filter(

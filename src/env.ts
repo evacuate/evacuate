@@ -13,6 +13,8 @@ interface Env {
   WEBHOOK_URL?: string | undefined;
   SLACK_BOT_TOKEN?: string | undefined;
   SLACK_CHANNEL_ID?: string | undefined;
+  TELEGRAM_BOT_TOKEN?: string | undefined;
+  TELEGRAM_CHAT_ID?: string | undefined;
 }
 
 const env: Env = {
@@ -25,6 +27,8 @@ const env: Env = {
   WEBHOOK_URL: process.env.WEBHOOK_URL,
   SLACK_BOT_TOKEN: process.env.SLACK_BOT_TOKEN,
   SLACK_CHANNEL_ID: process.env.SLACK_CHANNEL_ID,
+  TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
+  TELEGRAM_CHAT_ID: process.env.TELEGRAM_CHAT_ID,
 };
 
 export default env;

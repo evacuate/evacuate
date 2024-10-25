@@ -120,6 +120,36 @@ export default async function sendMessage(
     }
   }
 
+  if (
+    env.TELEGRAM_BOT_TOKEN !== undefined &&
+    env.TELEGRAM_CHAT_ID !== undefined
+  ) {
+    const url = new URL(
+      'sendMessage',
+      `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/`,
+    );
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(5000),
+        body: JSON.stringify({
+          chat_id: env.TELEGRAM_CHAT_ID,
+          text: text.replace('#evacuate', '').slice(0, 4096),
+        }),
+      });
+      if (response.ok) {
+        logger.info('Message successfully sent to Telegram');
+      } else {
+        const errorData = await response.json();
+        logger.error('Failed to send message to Telegram:', errorData);
+      }
+    } catch (error) {
+      logger.error('Error sending message to Telegram:', error);
+    }
+  }
+
   if (env.NOSTR_PRIVATE_KEY !== undefined) {
     try {
       // Post to Nostr
