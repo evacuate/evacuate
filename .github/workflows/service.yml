@@ -45,18 +45,18 @@ jobs:
 
       - name: Update deployment status (success)
         if: success()
-        uses: chrnorm/deployment-action@v2
+        uses: chrnorm/deployment-status@v2
         with:
-          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          token: '${{ github.token }}'
           state: 'success'
-          token: ${{ github.token }}
-          description: "Deployment completed successfully"
+          description: "Deployment to ${{ env.DEPLOY_ENV }} successful"
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
 
       - name: Update deployment status (failure)
         if: failure()
-        uses: chrnorm/deployment-action@v2
+        uses: chrnorm/deployment-status@v2
         with:
-          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          token: '${{ github.token }}'
           state: 'failure'
-          token: ${{ github.token }}
-          description: "Deployment failed"
+          description: "Deployment to ${{ env.DEPLOY_ENV }} failed"
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
