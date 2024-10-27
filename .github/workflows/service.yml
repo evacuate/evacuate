@@ -4,11 +4,12 @@ on:
   push:
     branches: ["main", "develop"]
 
+env:
+  IS_PRODUCTION: github.ref == 'refs/heads/main'
+  IS_REPO: github.repository == 'evacuate/evacuate'
+
 jobs:
   deploy:
-    env:
-      IS_PRODUCTION: github.ref == 'refs/heads/main'
-      IS_REPO: github.repository == 'evacuate/evacuate'
     name: ${{ env.IS_PRODUCTION && 'Production' || 'Preview' }}
     runs-on: ubuntu-latest
     if: env.IS_REPO # Run only if repository is evacuate/evacuate
