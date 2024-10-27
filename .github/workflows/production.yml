@@ -1,0 +1,25 @@
+name: Service
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    name: Production
+    runs-on: ubuntu-latest
+    if: github.repository == 'evacuate/evacuate' && github.ref == 'refs/heads/main' # Run only if repository is evacuate/evacuate and branch is main
+
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to Dokku (Production)
+        uses: dokku/github-action@v1.6.0
+        with:
+          git_remote_url: ssh://dokku@${{ secrets.DOKKU_HOST }}:${{ secrets.DOKKU_PORT }}/${{ secrets.DOKKU_APP_NAME }}
+          ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
+          branch: "main"
+          git_push_flags: --force
