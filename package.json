@@ -16,7 +16,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "build": "node scripts/rm.mjs dist && node scripts/build.mjs",
+    "build": "node scripts/rm.mjs && node scripts/build.mjs",
     "check": "biome check ./src",
     "check:write": "biome check --write ./src",
     "dev": "tsx src/index.ts",
