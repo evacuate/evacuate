@@ -47,7 +47,6 @@ jobs:
         if: success()
         uses: chrnorm/deployment-action@v2
         with:
-          environment: ${{ env.DEPLOY_ENV }}
           deployment-id: ${{ steps.deployment.outputs.deployment_id }}
           state: 'success'
           token: ${{ github.token }}
@@ -57,7 +56,6 @@ jobs:
         if: failure()
         uses: chrnorm/deployment-action@v2
         with:
-          environment: ${{ env.DEPLOY_ENV }}
           deployment-id: ${{ steps.deployment.outputs.deployment_id }}
           state: 'failure'
           token: ${{ github.token }}
