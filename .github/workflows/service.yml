@@ -26,13 +26,11 @@ jobs:
           echo "DOKKU_HOST=$([[ '${{ env.IS_PRODUCTION }}' == 'true' ]] && echo '${{ secrets.DOKKU_HOST }}' || echo '${{ secrets.DOKKU_PREVIEW_HOST }}')" >> $GITHUB_ENV
           echo "DOKKU_PORT=$([[ '${{ env.IS_PRODUCTION }}' == 'true' ]] && echo '${{ secrets.DOKKU_PORT }}' || echo '${{ secrets.DOKKU_PREVIEW_PORT }}')" >> $GITHUB_ENV
           echo "DOKKU_APP_NAME=$([[ '${{ env.IS_PRODUCTION }}' == 'true' ]] && echo '${{ secrets.DOKKU_APP_NAME }}' || echo '${{ secrets.DOKKU_PREVIEW_APP_NAME }}')" >> $GITHUB_ENV
-          echo "DOKKU_SSH_PRIVATE_KEY=$([[ '${{ env.IS_PRODUCTION }}' == 'true' ]] && echo '${{ secrets.DOKKU_SSH_PRIVATE_KEY }}' || echo '${{ secrets.DOKKU_PREVIEW_SSH_PRIVATE_KEY }}')" >> $GITHUB_ENV
-          echo "BRANCH_NAME=$([[ '${{ env.IS_PRODUCTION }}' == 'true' ]] && echo 'main' || echo 'develop')" >> $GITHUB_ENV
 
       - name: Push to Dokku (${{ env.DEPLOY_ENV }})
         uses: dokku/github-action@v1.6.0
         with:
           git_remote_url: ssh://dokku@${{ env.DOKKU_HOST }}:${{ env.DOKKU_PORT }}/${{ env.DOKKU_APP_NAME }}
-          ssh_private_key: ${{ env.DOKKU_SSH_PRIVATE_KEY }}
-          branch: ${{ env.BRANCH_NAME }}
+          ssh_private_key: ${{ env.IS_PRODUCTION == 'true' && secrets.DOKKU_SSH_PRIVATE_KEY || secrets.DOKKU_PREVIEW_SSH_PRIVATE_KEY }}
+          branch: ${{ env.IS_PRODUCTION == 'true' && 'main' || 'develop' }}
           git_push_flags: --force
