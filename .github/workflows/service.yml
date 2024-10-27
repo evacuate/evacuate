@@ -27,6 +27,15 @@ jobs:
           echo "DOKKU_PORT=$([[ '${{ env.IS_PRODUCTION }}' == 'true' ]] && echo '${{ secrets.DOKKU_PORT }}' || echo '${{ secrets.DOKKU_PREVIEW_PORT }}')" >> $GITHUB_ENV
           echo "DOKKU_APP_NAME=$([[ '${{ env.IS_PRODUCTION }}' == 'true' ]] && echo '${{ secrets.DOKKU_APP_NAME }}' || echo '${{ secrets.DOKKU_PREVIEW_APP_NAME }}')" >> $GITHUB_ENV
 
+      - name: Create GitHub Deployment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -X POST -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token $GITHUB_TOKEN" \
+          https://api.github.com/repos/${{ github.repository }}/deployments \
+          -d "{\"ref\":\"${{ github.ref }}\",\"environment\":\"${{ env.DEPLOY_ENV }}\",\"description\":\"Deploying to ${{ env.DEPLOY_ENV }}\"}"
+
       - name: Push to Dokku (${{ env.DEPLOY_ENV }})
         uses: dokku/github-action@v1.6.0
         with:
@@ -34,3 +43,13 @@ jobs:
           ssh_private_key: ${{ env.IS_PRODUCTION == 'true' && secrets.DOKKU_SSH_PRIVATE_KEY || secrets.DOKKU_PREVIEW_SSH_PRIVATE_KEY }}
           branch: ${{ env.IS_PRODUCTION == 'true' && 'main' || 'develop' }}
           git_push_flags: --force
+
+      - name: Set Deployment Status to Success
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -X POST -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token $GITHUB_TOKEN" \
+          https://api.github.com/repos/${{ github.repository }}/deployments/${{ steps.create_deployment.outputs.deployment_id }}/statuses \
+          -d "{\"state\":\"success\",\"environment\":\"${{ env.DEPLOY_ENV }}\",\"description\":\"Deployment completed successfully\"}"
