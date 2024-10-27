@@ -5,14 +5,13 @@ on:
     branches: ["main", "develop"]
 
 env:
-  IS_PRODUCTION: github.ref == 'refs/heads/main'
-  IS_REPO: github.repository == 'evacuate/evacuate'
+  IS_PRODUCTION: ${{ github.ref == 'refs/heads/main' }}
 
 jobs:
   deploy:
     name: ${{ env.IS_PRODUCTION && 'Production' || 'Preview' }}
     runs-on: ubuntu-latest
-    if: env.IS_REPO # Run only if repository is evacuate/evacuate
+    if: github.repository == 'evacuate/evacuate'
 
     steps:
       - name: Clone Repository
@@ -20,10 +19,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Push to Dokku (${{ env.IS_PRODUCTION && 'Production' || 'Preview' }})
+      - name: Set Deployment Variables
+        id: set_vars
+        run: |
+          echo "DEPLOY_ENV=$([[ '${{ env.IS_PRODUCTION }}' == 'true' ]] && echo 'Production' || echo 'Preview')" >> $GITHUB_ENV
+          echo "DOKKU_HOST=$([[ '${{ env.IS_PRODUCTION }}' == 'true' ]] && echo '${{ secrets.DOKKU_HOST }}' || echo '${{ secrets.DOKKU_PREVIEW_HOST }}')" >> $GITHUB_ENV
+          echo "DOKKU_PORT=$([[ '${{ env.IS_PRODUCTION }}' == 'true' ]] && echo '${{ secrets.DOKKU_PORT }}' || echo '${{ secrets.DOKKU_PREVIEW_PORT }}')" >> $GITHUB_ENV
+          echo "DOKKU_APP_NAME=$([[ '${{ env.IS_PRODUCTION }}' == 'true' ]] && echo '${{ secrets.DOKKU_APP_NAME }}' || echo '${{ secrets.DOKKU_PREVIEW_APP_NAME }}')" >> $GITHUB_ENV
+          echo "DOKKU_SSH_PRIVATE_KEY=$([[ '${{ env.IS_PRODUCTION }}' == 'true' ]] && echo '${{ secrets.DOKKU_SSH_PRIVATE_KEY }}' || echo '${{ secrets.DOKKU_PREVIEW_SSH_PRIVATE_KEY }}')" >> $GITHUB_ENV
+          echo "BRANCH_NAME=$([[ '${{ env.IS_PRODUCTION }}' == 'true' ]] && echo 'main' || echo 'develop')" >> $GITHUB_ENV
+
+      - name: Push to Dokku (${{ env.DEPLOY_ENV }})
         uses: dokku/github-action@v1.6.0
         with:
-          git_remote_url: ssh://dokku@${{ env.IS_PRODUCTION && secrets.DOKKU_HOST || secrets.DOKKU_PREVIEW_HOST }}:${{ env.IS_PRODUCTION && secrets.DOKKU_PORT || secrets.DOKKU_PREVIEW_PORT }}/${{ env.IS_PRODUCTION && secrets.DOKKU_APP_NAME || secrets.DOKKU_PREVIEW_APP_NAME }}
-          ssh_private_key: ${{ env.IS_PRODUCTION && secrets.DOKKU_SSH_PRIVATE_KEY || secrets.DOKKU_PREVIEW_SSH_PRIVATE_KEY }}
-          branch: ${{ env.IS_PRODUCTION && 'main' || 'develop' }}
+          git_remote_url: ssh://dokku@${{ env.DOKKU_HOST }}:${{ env.DOKKU_PORT }}/${{ env.DOKKU_APP_NAME }}
+          ssh_private_key: ${{ env.DOKKU_SSH_PRIVATE_KEY }}
+          branch: ${{ env.BRANCH_NAME }}
           git_push_flags: --force
