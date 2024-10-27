@@ -9,7 +9,7 @@ env:
 
 jobs:
   deploy:
-    name: ${{ env.IS_PRODUCTION && 'Production' || 'Preview' }}
+    name: ${{ github.ref == 'refs/heads/main' && 'Production' || 'Preview' }}
     runs-on: ubuntu-latest
     if: github.repository == 'evacuate/evacuate'
 
