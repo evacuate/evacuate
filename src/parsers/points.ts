@@ -1,6 +1,5 @@
 import translate from '@evacuate/translate';
-import parseScale from './scale';
-
+import parseScale from '~/parsers/scale';
 interface Point {
   pref: string;
   scale: number;

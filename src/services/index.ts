@@ -1,4 +1,4 @@
-import env from '../env';
+import env from '~/env';
 
 export function availableServices(): string[] {
   const serviceConditions: { [key: string]: boolean } = {

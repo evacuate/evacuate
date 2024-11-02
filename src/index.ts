@@ -1,14 +1,14 @@
 import { AtpAgent } from '@atproto/api';
 import pino from 'pino';
 import WebSocket from 'ws';
-import env from './env';
+import env from '~/env';
 
 // Import other proprietary functions
-import { handleEarthquake, handleTsunami } from './messages/handle';
-import { availableServices } from './services';
+import { handleEarthquake, handleTsunami } from '~/messages/handle';
+import { availableServices } from '~/services';
 
 // Import Types
-import type { JMAQuake, JMATsunami } from './types';
+import type { JMAQuake, JMATsunami } from '~/types';
 
 const BLUESKY_EMAIL = env.BLUESKY_EMAIL;
 const BLUESKY_PASSWORD = env.BLUESKY_PASSWORD;
