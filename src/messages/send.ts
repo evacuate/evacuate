@@ -1,14 +1,14 @@
-import { WebClient } from '@slack/web-api';
 import https from 'node:https';
 import { type AtpAgent, RichText } from '@atproto/api';
+import { WebClient } from '@slack/web-api';
 import { createRestAPIClient } from 'masto';
 import { decode } from 'nostr-tools/nip19';
 import { finalizeEvent, getPublicKey } from 'nostr-tools/pure';
 import { Relay, useWebSocketImplementation } from 'nostr-tools/relay';
 import WebSocket from 'ws';
 import env from '~/env';
-import { createSlackMessage } from '~/messages/create';
 import { getLogger } from '~/index';
+import { createSlackMessage } from '~/messages/create';
 
 useWebSocketImplementation(WebSocket);
 
