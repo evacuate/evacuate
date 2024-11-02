@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 
 // Import Helper Functions
-import parseArea from '../src/parsers/area';
+import parseArea from '~/parsers/area';
 
 const exampleData = [
   {

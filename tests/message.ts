@@ -1,17 +1,17 @@
 import { test } from 'vitest';
 
 // Import Helper Functions
-import parsePoints from '../src/parsers/points';
-import parseScale from '../src/parsers/scale';
-import parseCode from '../src/parsers/code';
-import parseArea from '../src/parsers/area';
+import parsePoints from '~/parsers/points';
+import parseScale from '~/parsers/scale';
+import parseCode from '~/parsers/code';
+import parseArea from '~/parsers/area';
 
 // Import Message Functions
 import {
   createEarthquakeMessage,
   createTsunamiMessage,
   createSlackMessage,
-} from '../src/messages/create';
+} from '~/messages/create';
 
 // Import Example Data
 import { message, tsunami } from './example';
