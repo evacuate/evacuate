@@ -38,6 +38,19 @@ export async function getLogger() {
   return await loggerPromise;
 }
 
+// Initialize the HTTP server
+async function initServer(): Promise<void> {
+  try {
+    await serve();
+    const logger = await getLogger();
+    logger.info('HTTP server started successfully');
+  } catch (error) {
+    const logger = await getLogger();
+    logger.error('Failed to start HTTP server:', error);
+    process.exit(1);
+  }
+}
+
 async function initWebSocket(): Promise<void> {
   try {
     if (BLUESKY_EMAIL !== undefined && BLUESKY_PASSWORD !== undefined) {
@@ -62,9 +75,6 @@ async function initWebSocket(): Promise<void> {
     const url = isDev
       ? 'wss://api-realtime-sandbox.p2pquake.net/v2/ws'
       : 'wss://api.p2pquake.net/v2/ws';
-
-    // Start the server
-    serve();
 
     const socket = new WebSocket(url);
 
@@ -92,6 +102,7 @@ async function initWebSocket(): Promise<void> {
 
 // Initialize the WebSocket connection
 void (async () => {
+  await initServer();
   await initWebSocket();
 })();
 
