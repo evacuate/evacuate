@@ -13,6 +13,11 @@ function uptime(): string {
 
 const app = new Hono();
 app.get('/', (c) => {
+  // Prevent caching of health check responses
+  c.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+  c.header('Pragma', 'no-cache');
+  c.header('Expires', '0');
+
   const status = {
     status: 'ok',
     timestamp: new Date().toISOString(),
