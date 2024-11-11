@@ -2,6 +2,7 @@ import { AtpAgent } from '@atproto/api';
 import pino from 'pino';
 import WebSocket from 'ws';
 import env from '~/env';
+import serve from '~/routes';
 
 // Import other proprietary functions
 import { handleEarthquake, handleTsunami } from '~/messages/handle';
@@ -35,6 +36,19 @@ const loggerPromise = initLogger();
 
 export async function getLogger() {
   return await loggerPromise;
+}
+
+// Initialize the HTTP server
+async function initServer(): Promise<void> {
+  try {
+    await serve();
+    const logger = await getLogger();
+    logger.info('HTTP server started successfully');
+  } catch (error) {
+    const logger = await getLogger();
+    logger.error('Failed to start HTTP server:', error);
+    process.exit(1);
+  }
 }
 
 async function initWebSocket(): Promise<void> {
@@ -88,6 +102,7 @@ async function initWebSocket(): Promise<void> {
 
 // Initialize the WebSocket connection
 void (async () => {
+  await initServer();
   await initWebSocket();
 })();
 
