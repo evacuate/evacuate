@@ -2,6 +2,7 @@ import { AtpAgent } from '@atproto/api';
 import pino from 'pino';
 import WebSocket from 'ws';
 import env from '~/env';
+import serve from '~/routes';
 
 // Import other proprietary functions
 import { handleEarthquake, handleTsunami } from '~/messages/handle';
@@ -61,6 +62,9 @@ async function initWebSocket(): Promise<void> {
     const url = isDev
       ? 'wss://api-realtime-sandbox.p2pquake.net/v2/ws'
       : 'wss://api.p2pquake.net/v2/ws';
+
+    // Start the server
+    serve();
 
     const socket = new WebSocket(url);
 
