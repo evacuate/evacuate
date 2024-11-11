@@ -5,6 +5,7 @@ dotenv.config();
 
 interface Env {
   VERSION?: string | undefined;
+  PORT?: string | undefined;
   BLUESKY_EMAIL?: string | undefined;
   BLUESKY_PASSWORD?: string | undefined;
   MASTODON_URL?: string | undefined;
@@ -20,6 +21,7 @@ interface Env {
 
 const env: Env = {
   VERSION: process.env.npm_package_version,
+  PORT: process.env.PORT,
   BLUESKY_EMAIL: process.env.BLUESKY_EMAIL,
   BLUESKY_PASSWORD: process.env.BLUESKY_PASSWORD,
   MASTODON_URL: process.env.MASTODON_URL,

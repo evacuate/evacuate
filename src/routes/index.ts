@@ -1,5 +1,6 @@
 import { serve as serveHono } from '@hono/node-server';
 import { Hono } from 'hono';
+import env from '~/env';
 
 // Routes
 import health from '~/routes/health';
@@ -13,6 +14,6 @@ export default function serve(): void {
 
   serveHono({
     fetch: app.fetch,
-    port: 3000,
+    port: Number.parseInt(env.PORT ?? '3000', 10),
   });
 }
