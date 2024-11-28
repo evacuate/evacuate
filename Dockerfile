@@ -23,4 +23,4 @@ COPY . .
 RUN yarn build
 
 # Start the app based on the value of PRODUCTION_LOGGING
-CMD if [ "$PRODUCTION_LOGGING" = "false" ]; then node dist/index.cjs; else node -r newrelic dist/index.cjs; fi
+CMD ["sh", "-c", "if [ \"$PRODUCTION_LOGGING\" = \"false\" ]; then node dist/index.cjs; else node -r newrelic dist/index.cjs; fi"]
