@@ -1,0 +1,7 @@
+services:
+  app:
+    image: node:20
+    environment:
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
