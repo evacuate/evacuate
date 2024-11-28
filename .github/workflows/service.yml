@@ -1,6 +1,7 @@
 name: Service
 
 on:
+  workflow_dispatch:
   push:
     branches: ["main", "develop"]
 
