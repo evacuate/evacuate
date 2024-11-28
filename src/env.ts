@@ -6,11 +6,12 @@ dotenv.config();
 interface Env {
   VERSION?: string | undefined;
   PORT?: string | undefined;
+  PRODUCTION_LOGGING?: boolean | undefined;
+  NODE_ENV?: 'development' | 'production';
   BLUESKY_EMAIL?: string | undefined;
   BLUESKY_PASSWORD?: string | undefined;
   MASTODON_URL?: string | undefined;
   MASTODON_ACCESS_TOKEN?: string | undefined;
-  NODE_ENV?: 'development' | 'production';
   NOSTR_PRIVATE_KEY?: string | undefined;
   WEBHOOK_URL?: string | undefined;
   SLACK_BOT_TOKEN?: string | undefined;
@@ -22,11 +23,12 @@ interface Env {
 const env: Env = {
   VERSION: process.env.npm_package_version,
   PORT: process.env.PORT,
+  PRODUCTION_LOGGING: process.env.PRODUCTION_LOGGING === 'true',
+  NODE_ENV: process.env.NODE_ENV as 'development' | 'production',
   BLUESKY_EMAIL: process.env.BLUESKY_EMAIL,
   BLUESKY_PASSWORD: process.env.BLUESKY_PASSWORD,
   MASTODON_URL: process.env.MASTODON_URL,
   MASTODON_ACCESS_TOKEN: process.env.MASTODON_ACCESS_TOKEN,
-  NODE_ENV: process.env.NODE_ENV as 'development' | 'production',
   NOSTR_PRIVATE_KEY: process.env.NOSTR_PRIVATE_KEY,
   WEBHOOK_URL: process.env.WEBHOOK_URL,
   SLACK_BOT_TOKEN: process.env.SLACK_BOT_TOKEN,

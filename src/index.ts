@@ -25,7 +25,8 @@ const RECONNECT_DELAY: number = 5000; // 5 seconds
 let isFirstRun = true; // Flag to check if it's the initial run
 
 async function initLogger() {
-  if (NODE_ENV === 'production') {
+  if (NODE_ENV === 'production' && env.PRODUCTION_LOGGING !== false) {
+    console.log('Using New Relic Pino Enricher');
     const nrPino = (await import('@newrelic/pino-enricher')).default;
     return pino(nrPino());
   }
