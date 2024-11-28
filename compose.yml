@@ -1,7 +1,8 @@
 services:
   app:
-    image: node:20
+    build: .
     environment:
       NODE_ENV: production
+      PRODUCTION_LOGGING: false
     ports:
       - "3000:3000"
