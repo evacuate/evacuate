@@ -4,9 +4,8 @@ import WebSocket from 'ws';
 import env from '~/env';
 import serve from '~/routes';
 
-// Import other proprietary functions
+// Import Message Handlers
 import { handleEarthquake, handleTsunami } from '~/messages/handle';
-import { availableServices } from '~/services';
 
 // Import Types
 import type { JMAQuake, JMATsunami } from '~/types';
@@ -150,4 +149,24 @@ async function onClose(code: number, reason: string): Promise<void> {
 async function onOpen(): Promise<void> {
   const logger = await getLogger();
   logger.info('WebSocket connection opened.');
+}
+
+// Function to check which services are available
+function availableServices(): string[] {
+  const serviceConditions: { [key: string]: boolean } = {
+    Bluesky:
+      env.BLUESKY_EMAIL !== undefined && env.BLUESKY_PASSWORD !== undefined,
+    Mastodon: env.MASTODON_ACCESS_TOKEN !== undefined,
+    Nostr: env.NOSTR_PRIVATE_KEY !== undefined,
+    Webhook: env.WEBHOOK_URL !== undefined,
+    Slack:
+      env.SLACK_BOT_TOKEN !== undefined && env.SLACK_CHANNEL_ID !== undefined,
+    Telegram:
+      env.TELEGRAM_BOT_TOKEN !== undefined &&
+      env.TELEGRAM_CHAT_ID !== undefined,
+  };
+
+  return Object.keys(serviceConditions).filter(
+    (service) => serviceConditions[service],
+  );
 }
