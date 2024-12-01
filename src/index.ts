@@ -66,10 +66,12 @@ async function initWebSocket(): Promise<void> {
       `Make a submission for the following services: ${availableServices().join(', ')}`,
     );
 
-    if (agent.session !== undefined && isFirstRun) {
-      logger.info('Logged in successfully.');
-      logger.info(`Now running in ${NODE_ENV} mode.`);
+    if (isFirstRun) {
       isFirstRun = false; // Set the flag to false after the first run
+      if (agent.session !== undefined) {
+        logger.info('Logged in successfully to Bluesky');
+      }
+      logger.info(`Now running in ${NODE_ENV} mode.`);
     }
 
     const url = isDev
