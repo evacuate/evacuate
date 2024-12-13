@@ -36,11 +36,11 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            --tag ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:${{ env.VERSION }} \
-            --tag ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest .
+            --tag ghcr.io/${{ github.repository }}:${{ env.VERSION }} \
+            --tag ghcr.io/${{ github.repository }}:latest .
 
       # Push the Docker image to ghcr.io
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:${{ env.VERSION }}
-          docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:${{ env.VERSION }}
+          docker push ghcr.io/${{ github.repository }}:latest
