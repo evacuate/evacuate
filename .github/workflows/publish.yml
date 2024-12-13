@@ -7,6 +7,7 @@ on:
 
 jobs:
   build-and-push:
+    name: Docker
     runs-on: ubuntu-latest
 
     permissions:
