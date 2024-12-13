@@ -37,15 +37,14 @@
 
 ### Configuration
 
-Create a `.env` file in the root directory and add your credentials:
+1. Copy the example configuration file:
 
-```
-BLUESKY_EMAIL="user@example.com"
-BLUESKY_PASSWORD="example"
+    ```bash
+    cp .env.example .env
+    ```
 
-MASTODON_URL="https://mastodon.social"
-MASTODON_ACCESS_TOKEN="example"
-```
+2. Edit the `.env` file
+
 
 ### Scripts
 
