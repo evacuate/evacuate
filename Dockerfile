@@ -13,8 +13,9 @@ ENV NEW_RELIC_APPLICATION_LOGGING_FORWARDING_ENABLED=true
 # Copy package.json and package-lock.json to the container
 COPY package*.json ./
 
-# Install app dependencies
-RUN yarn install
+# Install dependencies and clean cache
+RUN yarn install --frozen-lockfile --production && \
+    yarn cache clean
 
 # Copy the rest of the application code to the container
 COPY . .
