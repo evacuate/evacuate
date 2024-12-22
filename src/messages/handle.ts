@@ -10,6 +10,7 @@ import parseCode from '~/parsers/code';
 import parsePoints from '~/parsers/points';
 import parseScale from '~/parsers/scale';
 import type { JMAQuake, JMATsunami } from '~/types';
+import env from '~/env';
 
 export async function handleEarthquake(
   earthquakeData: JMAQuake,
@@ -29,6 +30,15 @@ export async function handleEarthquake(
 
   if (scale !== undefined) {
     const text = createEarthquakeMessage(time, info, scale, points, isDev);
+
+    const minimumScale = env.EARTHQUAKE_MINIMUM_SCALE ?? 0;
+    if (minimumScale > Number(scale)) {
+      logger.info(
+        `Earthquake scale is below the threshold (${scale} < ${minimumScale}). Skipping...`,
+      );
+      return;
+    }
+
     await sendMessage(text, agent);
     logger.info('Earthquake alert received and posted successfully.');
   } else {
