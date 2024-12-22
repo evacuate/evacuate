@@ -29,15 +29,22 @@ export async function handleEarthquake(
   const scale = parseScale(maxScale ?? -1);
 
   if (scale !== undefined) {
-    const text = createEarthquakeMessage(time, info, scale, points, isDev);
-
     const minimumScale = env.EARTHQUAKE_MINIMUM_SCALE ?? 0;
-    if (minimumScale > Number(scale)) {
+    const numericScale = Number(scale);
+
+    if (isNaN(numericScale)) {
+      logger.warn('Invalid earthquake scale value:', scale);
+      return;
+    }
+
+    if (numericScale < minimumScale) {
       logger.info(
-        `Earthquake scale is below the threshold (${scale} < ${minimumScale}). Skipping...`,
+        `Skipping earthquake alert - Scale ${numericScale} below minimum ${minimumScale}`,
       );
       return;
     }
+
+    const text = createEarthquakeMessage(time, info, scale, points, isDev);
 
     await sendMessage(text, agent);
     logger.info('Earthquake alert received and posted successfully.');
