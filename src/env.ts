@@ -9,6 +9,7 @@ interface Env {
   PRODUCTION_LOGGING?: boolean | undefined;
   NODE_ENV?: 'development' | 'production';
   EARTHQUAKE_MINIMUM_SCALE?: number | undefined;
+
   BLUESKY_EMAIL?: string | undefined;
   BLUESKY_PASSWORD?: string | undefined;
   MASTODON_URL?: string | undefined;
@@ -26,7 +27,16 @@ const env: Env = {
   PORT: process.env.PORT,
   PRODUCTION_LOGGING: process.env.PRODUCTION_LOGGING === 'true',
   NODE_ENV: process.env.NODE_ENV as 'development' | 'production',
-  EARTHQUAKE_MINIMUM_SCALE: Number(process.env.EARTHQUAKE_MINIMUM_SCALE),
+  EARTHQUAKE_MINIMUM_SCALE: (() => {
+    const value = Number(process.env.EARTHQUAKE_MINIMUM_SCALE);
+    if (isNaN(value) || value < 0 || value > 7) {
+      throw new Error(
+        'EARTHQUAKE_MINIMUM_SCALE must be a number between 0 and 7',
+      );
+    }
+    return value;
+  })(),
+
   BLUESKY_EMAIL: process.env.BLUESKY_EMAIL,
   BLUESKY_PASSWORD: process.env.BLUESKY_PASSWORD,
   MASTODON_URL: process.env.MASTODON_URL,
