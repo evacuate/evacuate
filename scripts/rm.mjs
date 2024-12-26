@@ -1,6 +1,11 @@
 import { existsSync, rmSync } from "node:fs";
 import { resolve, dirname } from "node:path";
-const dirPath = resolve(dirname(new URL(import.meta.url).pathname), "../dist");
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const dirPath = resolve(__dirname, "../dist");
+
 existsSync(dirPath)
   ? rmSync(dirPath, { recursive: true, force: true })
   : console.log("Directory does not exist:", dirPath);
