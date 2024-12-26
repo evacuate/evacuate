@@ -62,9 +62,11 @@ async function initWebSocket(): Promise<void> {
 
     // Log the services that are available
     const logger = await getLogger();
-    logger.info(
-      `Make a submission for the following services: ${availableServices().join(', ')}`,
-    );
+    if (env.ENABLE_LOGGER) {
+      logger.info(
+        `Make a submission for the following services: ${availableServices().join(', ')}`,
+      );
+    }
 
     if (isFirstRun) {
       isFirstRun = false; // Set the flag to false after the first run

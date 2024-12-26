@@ -97,7 +97,9 @@ export default async function sendMessage(
       req.write(payload);
       req.end();
 
-      logger.info('Message successfully sent to webhook');
+      if (env.ENABLE_LOGGER) {
+        logger.info('Message successfully sent to webhook');
+      }
     } catch (webhookError) {
       logger.error('Error during webhook message send:', webhookError);
     }
@@ -113,7 +115,9 @@ export default async function sendMessage(
           channel: env.SLACK_CHANNEL_ID,
           attachments: attachments,
         });
-        logger.info('Message successfully sent to Slack');
+        if (env.ENABLE_LOGGER) {
+          logger.info('Message successfully sent to Slack');
+        }
       } catch (slackError) {
         logger.error('Error during Slack message send:', slackError);
       }
@@ -140,7 +144,9 @@ export default async function sendMessage(
         }),
       });
       if (response.ok) {
-        logger.info('Message successfully sent to Telegram');
+        if (env.ENABLE_LOGGER) {
+          logger.info('Message successfully sent to Telegram');
+        }
       } else {
         const errorData = await response.json();
         logger.error('Failed to send message to Telegram:', errorData);
@@ -187,9 +193,11 @@ export default async function sendMessage(
         }
       }
 
-      logger.info(
-        `Submission was successful for ${successfulRelays} out of ${NOSTR_RELAYS.length} relays`,
-      );
+      if (env.ENABLE_LOGGER) {
+        logger.info(
+          `Submission was successful for ${successfulRelays} out of ${NOSTR_RELAYS.length} relays`,
+        );
+      }
     } catch (error) {
       logger.error('Error during Nostr message send:', error);
     }
