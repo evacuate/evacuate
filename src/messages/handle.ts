@@ -38,9 +38,11 @@ export async function handleEarthquake(
     }
 
     if (numericScale < minimumScale) {
-      logger.info(
-        `Skipping earthquake alert - Scale ${numericScale} below minimum ${minimumScale}`,
-      );
+      if (env.ENABLE_LOGGER) {
+        logger.info(
+          `Skipping earthquake alert - Scale ${numericScale} below minimum ${minimumScale}`,
+        );
+      }
       return;
     }
 
@@ -49,7 +51,9 @@ export async function handleEarthquake(
     await sendMessage(text, agent);
     logger.info('Earthquake alert received and posted successfully.');
   } else {
-    logger.warn('Earthquake scale is undefined.');
+    if (env.ENABLE_LOGGER) {
+      logger.warn('Earthquake scale is undefined.');
+    }
   }
 }
 
@@ -72,6 +76,8 @@ export async function handleTsunami(
     await sendMessage(text, agent);
     logger.info('Tsunami alert received and posted successfully.');
   } else {
-    logger.warn('Tsunami area is undefined.');
+    if (env.ENABLE_LOGGER) {
+      logger.warn('Tsunami area is undefined.');
+    }
   }
 }
