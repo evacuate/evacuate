@@ -38,7 +38,9 @@ const env: Env = {
   PORT: process.env.PORT,
   PRODUCTION_LOGGING: process.env.PRODUCTION_LOGGING === 'true',
   NODE_ENV: process.env.NODE_ENV as 'development' | 'production',
-  ENABLE_LOGGER: process.env.ENABLE_LOGGER === 'true',
+  ENABLE_LOGGER: process.env.ENABLE_LOGGER
+    ? process.env.ENABLE_LOGGER === 'true'
+    : true,
   EARTHQUAKE_MINIMUM_SCALE: getScale(),
 
   BLUESKY_EMAIL: process.env.BLUESKY_EMAIL,
