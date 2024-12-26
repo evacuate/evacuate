@@ -1,0 +1,46 @@
+#!/bin/sh
+
+echo "🔍 Running pre-push checks..."
+
+# コミットメッセージの@pre-pushチェック
+echo "📝 Checking @pre-push tag..."
+commit_message=$(git log -1 --pretty=%B)
+if ! echo "$commit_message" | grep -q "@pre-push"; then
+    echo "❌ Error: Commit message must include @pre-push tag"
+    exit 1
+fi
+echo "✅ @pre-push tag check passed"
+
+# 型チェック
+echo "📘 Running type check..."
+if ! npm run typecheck; then
+    echo "❌ Type check failed"
+    exit 1
+fi
+echo "✅ Type check passed"
+
+# Biomeチェック
+echo "🧹 Running Biome checks..."
+if ! npm run check; then
+    echo "❌ Biome check failed"
+    exit 1
+fi
+echo "✅ Biome check passed"
+
+# テストチェック
+echo "🧪 Running tests..."
+if ! npm run test; then
+    echo "❌ Test failed"
+    exit 1
+fi
+echo "✅ Test check passed"
+
+# ビルドチェック
+echo "🏗️ Running build check..."
+if ! npm run build; then
+    echo "❌ Build failed"
+    exit 1
+fi
+echo "✅ Build check passed"
+
+echo "✅ All checks passed! Ready to push." 
