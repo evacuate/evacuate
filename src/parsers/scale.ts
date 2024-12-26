@@ -10,6 +10,9 @@ const scaleMap = new Map<number, string>([
   [70, '7'],
 ]);
 
-export default function parseScale(scale: number): string | undefined {
+export default function parseScale(
+  scale: number | undefined,
+): string | undefined {
+  if (scale === undefined) return undefined;
   return scaleMap.get(scale);
 }
