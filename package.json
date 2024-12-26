@@ -19,7 +19,7 @@
     "build": "node scripts/rm.mjs && node scripts/build.mjs",
     "check": "biome check ./src",
     "check:write": "biome check --write ./src",
-    "dev": "tsx src/index.ts",
+    "dev": "NODE_ENV=development tsx src/index.ts",
     "format": "biome format ./src",
     "format:write": "biome format --write ./src",
     "lint": "biome lint ./src",
