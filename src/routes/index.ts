@@ -1,19 +1,27 @@
-import { serve as serveHono } from '@hono/node-server';
+import type { BskyAgent } from '@atproto/api';
 import { Hono } from 'hono';
-import env from '~/env';
+import { handleEarthquake, handleTsunami } from '~/messages/handle';
 
-// Routes
-import health from '~/routes/health';
-
-export default function serve(): void {
-  const app = new Hono();
-  app.get('/', (c) => c.redirect('/health'));
+export default function createRoutes(agent: BskyAgent | undefined) {
+  const routes = new Hono();
 
   // Health check
-  app.route('/health', health);
-
-  serveHono({
-    fetch: app.fetch,
-    port: Number.parseInt(env.PORT ?? '3000', 10),
+  routes.get('/health', (c) => {
+    return c.text('OK');
   });
+
+  // Webhook endpoints
+  routes.post('/webhook/earthquake', async (c) => {
+    const data = await c.req.json();
+    await handleEarthquake(data, agent);
+    return c.json({ status: 'ok' });
+  });
+
+  routes.post('/webhook/tsunami', async (c) => {
+    const data = await c.req.json();
+    await handleTsunami(data, agent);
+    return c.json({ status: 'ok' });
+  });
+
+  return routes;
 }
