@@ -2,7 +2,9 @@
   "name": "evacuate",
   "version": "1.0.0",
   "description": "",
-  "keywords": ["evacuate"],
+  "keywords": [
+    "evacuate"
+  ],
   "homepage": "https://github.com/evacuate/evacuate#readme",
   "bugs": {
     "url": "https://github.com/evacuate/evacuate/issues"
@@ -56,5 +58,9 @@
   "packageManager": "yarn@1.22.22",
   "engines": {
     "node": "20.18.x"
+  },
+  "volta": {
+    "node": "20.18.1",
+    "yarn": "1.22.19"
   }
 }
