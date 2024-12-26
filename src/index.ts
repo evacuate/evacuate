@@ -1,174 +1,86 @@
-import { AtpAgent } from '@atproto/api';
+import { BskyAgent } from '@atproto/api';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { logger as honoLogger } from 'hono/logger';
+import { prettyJSON } from 'hono/pretty-json';
+import { secureHeaders } from 'hono/secure-headers';
 import pino from 'pino';
-import WebSocket from 'ws';
 import env from '~/env';
-import serve from '~/routes';
+import { errorHandler } from '~/middleware/errorHandler';
+import createRoutes from '~/routes';
 
-// Import Message Handlers
-import { handleEarthquake, handleTsunami } from '~/messages/handle';
-
-// Import Types
-import type { JMAQuake, JMATsunami } from '~/types';
-
-const BLUESKY_EMAIL = env.BLUESKY_EMAIL;
+// Environment variables
+const BLUESKY_IDENTIFIER = env.BLUESKY_IDENTIFIER;
 const BLUESKY_PASSWORD = env.BLUESKY_PASSWORD;
-const NODE_ENV: 'development' | 'production' = env.NODE_ENV ?? 'development';
+const NODE_ENV = env.NODE_ENV;
 
-const isDev: boolean = NODE_ENV === 'development';
-
-const agent = new AtpAgent({
-  service: 'https://bsky.social',
+// Create logger
+const logger = pino({
+  level: env.PRODUCTION_LOGGING ? 'info' : 'debug',
+  transport: env.PRODUCTION_LOGGING
+    ? undefined
+    : {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          translateTime: 'SYS:standard',
+        },
+      },
 });
 
-const RECONNECT_DELAY: number = 5000; // 5 seconds
-let isFirstRun = true; // Flag to check if it's the initial run
-
-async function initLogger() {
-  if (NODE_ENV === 'production' && env.PRODUCTION_LOGGING !== false) {
-    console.log('Using New Relic Pino Enricher');
-    const nrPino = (await import('@newrelic/pino-enricher')).default;
-    return pino(nrPino());
-  }
-  return pino();
-}
-
-const loggerPromise = initLogger();
-
+// Export logger for use in other modules
 export async function getLogger() {
-  return await loggerPromise;
+  return logger;
 }
 
-// Initialize the HTTP server
-async function initServer(): Promise<void> {
-  try {
-    await serve();
-    const logger = await getLogger();
-    logger.info('HTTP server started successfully');
-  } catch (error) {
-    const logger = await getLogger();
-    logger.error('Failed to start HTTP server:', error);
-    process.exit(1);
-  }
-}
+// Create Bluesky agent
+let agent: BskyAgent | undefined;
 
-async function initWebSocket(): Promise<void> {
-  try {
-    if (BLUESKY_EMAIL !== undefined && BLUESKY_PASSWORD !== undefined) {
-      await agent.login({
-        identifier: BLUESKY_EMAIL,
-        password: BLUESKY_PASSWORD,
-      });
-    }
-
-    // Log the services that are available
-    const logger = await getLogger();
-    logger.info(
-      `Make a submission for the following services: ${availableServices().join(', ')}`,
-    );
-
-    if (isFirstRun) {
-      isFirstRun = false; // Set the flag to false after the first run
-      if (agent.session !== undefined) {
-        logger.info('Logged in successfully to Bluesky');
-      }
-      logger.info(`Now running in ${NODE_ENV} mode.`);
-    }
-
-    const url = isDev
-      ? 'wss://api-realtime-sandbox.p2pquake.net/v2/ws'
-      : 'wss://api.p2pquake.net/v2/ws';
-
-    const socket = new WebSocket(url);
-
-    // WebSocket event listeners
-    socket.onopen = () => {
-      onOpen();
-    };
-
-    socket.onmessage = (message) => {
-      onMessage(message.data);
-    };
-
-    socket.onerror = (error) => {
-      onError(error.message);
-    };
-
-    socket.onclose = (events) => {
-      onClose(events.code, events.reason);
-    };
-  } catch (error) {
-    const logger = await getLogger();
-    logger.error('Error during login or WebSocket initialization: ', error);
-  }
-}
-
-// Initialize the WebSocket connection
-void (async () => {
-  await initServer();
-  await initWebSocket();
-})();
-
-async function onMessage(message: WebSocket.Data): Promise<void> {
-  const logger = await getLogger();
-  if (isDev) logger.debug('Message received from server.');
-  const earthQuakeData = JSON.parse(message.toString() as string) as
-    | JMAQuake
-    | JMATsunami;
-
-  if (earthQuakeData.code === 551) {
-    handleEarthquake(earthQuakeData as JMAQuake, agent, isDev);
-  } else if (earthQuakeData.code === 552) {
-    handleTsunami(earthQuakeData as JMATsunami, agent, isDev);
-  } else {
-    if (isDev) {
-      logger.warn(
-        'Unknown message code: ',
-        (earthQuakeData as JMAQuake | JMATsunami).code,
-      );
-    }
-  }
-}
-
-async function onError(error: string): Promise<void> {
-  const logger = await getLogger();
-  logger.error('WebSocket connection error:', error);
-}
-
-async function onClose(code: number, reason: string): Promise<void> {
-  const logger = await getLogger();
-  logger.info('WebSocket connection closed:', {
-    code,
-    reason: reason.toString(),
+if (BLUESKY_IDENTIFIER && BLUESKY_PASSWORD) {
+  agent = new BskyAgent({
+    service: 'https://bsky.social',
   });
 
-  // Attempt to reconnect after a delay
-  setTimeout(() => {
-    logger.info('Attempting to reconnect...');
-    void initWebSocket();
-  }, RECONNECT_DELAY);
+  try {
+    await agent.login({
+      identifier: BLUESKY_IDENTIFIER,
+      password: BLUESKY_PASSWORD,
+    });
+    logger.info('Successfully logged in to Bluesky');
+  } catch (error) {
+    logger.error('Failed to login to Bluesky:', error);
+    agent = undefined;
+  }
 }
 
-async function onOpen(): Promise<void> {
-  const logger = await getLogger();
-  logger.info('WebSocket connection opened.');
-}
+// Create Hono app
+const app = new Hono();
 
-// Function to check which services are available
-function availableServices(): string[] {
-  const serviceConditions: { [key: string]: boolean } = {
-    Bluesky:
-      env.BLUESKY_EMAIL !== undefined && env.BLUESKY_PASSWORD !== undefined,
-    Mastodon: env.MASTODON_ACCESS_TOKEN !== undefined,
-    Nostr: env.NOSTR_PRIVATE_KEY !== undefined,
-    Webhook: env.WEBHOOK_URL !== undefined,
-    Slack:
-      env.SLACK_BOT_TOKEN !== undefined && env.SLACK_CHANNEL_ID !== undefined,
-    Telegram:
-      env.TELEGRAM_BOT_TOKEN !== undefined &&
-      env.TELEGRAM_CHAT_ID !== undefined,
-  };
+// Middleware
+app.use('*', honoLogger());
+app.use('*', prettyJSON());
+app.use('*', secureHeaders());
+app.use(
+  '*',
+  cors({
+    origin: '*',
+    allowMethods: ['POST'],
+    allowHeaders: ['Content-Type', 'x-request-id'],
+    maxAge: 86400,
+  }),
+);
 
-  return Object.keys(serviceConditions).filter(
-    (service) => serviceConditions[service],
-  );
-}
+// Error handler
+app.onError(errorHandler);
+
+// Mount routes
+app.route('', createRoutes(agent));
+
+// Start server
+const port = env.PORT;
+logger.info(`Starting server on port ${port}`);
+
+export default {
+  port,
+  fetch: app.fetch,
+};

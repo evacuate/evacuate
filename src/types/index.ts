@@ -1,9 +1,34 @@
+/**
+ * Basic data structure
+ */
 export interface BasicData {
+  /** Unique ID */
   id: string;
+  /** Data type code */
   code: number;
+  /** Timestamp */
   time: string;
 }
 
+/**
+ * Earthquake intensity scale
+ */
+export type EarthquakeScale = 10 | 20 | 30 | 40 | 45 | 50 | 55 | 60 | 70 | -1;
+
+/**
+ * Tsunami status
+ */
+export type TsunamiStatus =
+  | 'None'
+  | 'Unknown'
+  | 'Checking'
+  | 'NonEffective'
+  | 'Watch'
+  | 'Warning';
+
+/**
+ * Earthquake information
+ */
 export interface JMAQuake extends BasicData {
   code: 551;
   issue: {
@@ -32,71 +57,32 @@ export interface JMAQuake extends BasicData {
       depth?: number;
       magnitude?: number;
     };
-    maxScale?: 10 | 20 | 30 | 40 | 45 | 50 | 55 | 60 | 70 | -1;
-    domesticTsunami?:
-      | 'None'
-      | 'Unknown'
-      | 'Checking'
-      | 'NonEffective'
-      | 'Watch'
-      | 'Warning';
-    foreignTsunami?:
-      | 'None'
-      | 'Unknown'
-      | 'Checking'
-      | 'NonEffectiveNearby'
-      | 'WarningNearby'
-      | 'WarningPacific'
-      | 'WarningPacificWide'
-      | 'WarningIndian'
-      | 'WarningIndianWide'
-      | 'Potential';
-  };
-  points: Array<{
-    pref: string;
-    addr: string;
-    isArea: boolean;
-    scale: 10 | 20 | 30 | 40 | 45 | 46 | 50 | 55 | 60 | 70;
-  }>;
-  comments?: {
-    freeFormComment: string;
+    maxScale?: EarthquakeScale;
+    domesticTsunami?: TsunamiStatus;
+    foreignTsunami?: TsunamiStatus;
   };
 }
 
-export type JMAQuakes = JMAQuake[];
-
+/**
+ * Tsunami information
+ */
 export interface JMATsunami extends BasicData {
   code: 552;
-  cancelled: boolean;
   issue: {
-    source: string;
+    source?: string;
     time: string;
-    type: 'Focus';
+    type: 'Focus' | 'Destination' | 'Other';
+    correct?: 'None' | 'Unknown' | 'Destination';
   };
-  areas: Array<{
-    grade?: 'MajorWarning' | 'Warning' | 'Watch' | 'Unknown';
-    immediate?: boolean;
-    name?: string;
-    firstHeight?: {
-      arrivalTime?: string;
-      condition?:
-        | 'ただちに津波来襲と予測'
-        | '津波到達中と推測'
-        | '第１波の到達を確認';
+  tsunami: {
+    time: string;
+    info: {
+      type: TsunamiStatus;
+      areas: {
+        name: string;
+        immediate: boolean;
+        height?: string;
+      }[];
     };
-    maxHeight?: {
-      description?:
-        | '巨大'
-        | '高い'
-        | '１０ｍ超'
-        | '１０ｍ'
-        | '５ｍ'
-        | '３ｍ'
-        | '１ｍ'
-        | '０．２ｍ未満';
-      value?: number;
-    };
-  }>;
+  };
 }
-
-export type JMATsunamis = JMATsunami[];

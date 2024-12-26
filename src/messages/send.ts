@@ -1,197 +1,252 @@
-import https from 'node:https';
-import { type AtpAgent, RichText } from '@atproto/api';
-import { WebClient } from '@slack/web-api';
-import { createRestAPIClient } from 'masto';
+import https from 'https';
+import type { AtpAgent } from '@atproto/api';
+import { finalizeEvent, getPublicKey } from 'nostr-tools';
 import { decode } from 'nostr-tools/nip19';
-import { finalizeEvent, getPublicKey } from 'nostr-tools/pure';
-import { Relay, useWebSocketImplementation } from 'nostr-tools/relay';
-import WebSocket from 'ws';
-import env from '~/env';
+import { Relay } from 'nostr-tools/relay';
 import { getLogger } from '~/index';
-import { createSlackMessage } from '~/messages/create';
+import { MessageError, NetworkError, RateLimitError } from '~/types/errors';
+import { NOSTR_RELAYS } from '../constants';
 
-useWebSocketImplementation(WebSocket);
+/**
+ * Post a message to Bluesky
+ */
+async function postToBluesky(text: string, agent: AtpAgent): Promise<void> {
+  try {
+    await agent.post({
+      text,
+      createdAt: new Date().toISOString(),
+    });
+  } catch (error) {
+    throw new MessageError(
+      'Failed to post to Bluesky',
+      'bluesky',
+      error instanceof Error ? error : new Error(String(error)),
+    );
+  }
+}
 
-const slackClient = new WebClient(env.SLACK_BOT_TOKEN); // Slack Web API Client
-const MASTODON_URL: string = env.MASTODON_URL ?? 'https://mastodon.social';
+/**
+ * Post a message to Mastodon
+ */
+async function postToMastodon(text: string): Promise<void> {
+  try {
+    // TODO: Implement Mastodon posting
+    throw new Error('Not implemented');
+  } catch (error) {
+    throw new MessageError(
+      'Failed to post to Mastodon',
+      'mastodon',
+      error instanceof Error ? error : new Error(String(error)),
+    );
+  }
+}
 
-// Define a list of relays
-const NOSTR_RELAYS = [
-  'wss://relay.damus.io',
-  'wss://yabu.me',
-  'wss://nostr-pub.wellorder.net',
-  'wss://nos.lol',
-  // Add as needed
-];
+/**
+ * Post a message to Nostr
+ */
+async function postToNostr(text: string): Promise<void> {
+  try {
+    const privateKeyStr = process.env.NOSTR_PRIVATE_KEY ?? '';
+    const { type, data } = decode(privateKeyStr);
+    if (type !== 'nsec') {
+      throw new Error('Invalid private key format. Expected nsec format.');
+    }
 
+    const privateKey = data as Uint8Array;
+    const publicKey = getPublicKey(privateKey);
+
+    const event = {
+      kind: 1,
+      pubkey: publicKey,
+      created_at: Math.floor(Date.now() / 1000),
+      tags: [],
+      content: text,
+    };
+
+    const signedEvent = finalizeEvent(event, privateKey);
+    const relays = NOSTR_RELAYS.map((url: string) => new Relay(url));
+
+    await Promise.all(
+      relays.map(async (relay: Relay) => {
+        try {
+          await relay.connect();
+          await relay.publish(signedEvent);
+          await relay.close();
+        } catch (error) {
+          console.warn(`Failed to publish to relay ${relay.url}:`, error);
+        }
+      }),
+    );
+  } catch (error) {
+    throw new MessageError(
+      'Failed to post to Nostr',
+      'nostr',
+      error instanceof Error ? error : new Error(String(error)),
+    );
+  }
+}
+
+/**
+ * Post a message to Slack
+ */
+async function postToSlack(text: string): Promise<void> {
+  try {
+    // TODO: Implement Slack posting
+    throw new Error('Not implemented');
+  } catch (error) {
+    throw new MessageError(
+      'Failed to post to Slack',
+      'slack',
+      error instanceof Error ? error : new Error(String(error)),
+    );
+  }
+}
+
+/**
+ * Post a message to Telegram
+ */
+async function postToTelegram(text: string): Promise<void> {
+  try {
+    const token = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+
+    if (!token || !chatId) {
+      throw new Error('Telegram credentials not configured');
+    }
+
+    const url = `https://api.telegram.org/bot${token}/sendMessage`;
+    const data = JSON.stringify({
+      chat_id: chatId,
+      text,
+      parse_mode: 'HTML',
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      const req = https.request(
+        url,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(data),
+          },
+        },
+        (res) => {
+          let data = '';
+          res.on('data', (chunk) => (data += chunk));
+          res.on('end', () => {
+            if (res.statusCode === 429) {
+              const retryAfter = parseInt(
+                res.headers['retry-after'] || '60',
+                10,
+              );
+              reject(
+                new RateLimitError(
+                  'Rate limit exceeded for Telegram',
+                  retryAfter,
+                  'telegram',
+                ),
+              );
+            } else if (res.statusCode !== 200) {
+              reject(
+                new NetworkError(
+                  'Failed to post to Telegram',
+                  new Error(data),
+                  url,
+                ),
+              );
+            } else {
+              resolve(undefined);
+            }
+          });
+        },
+      );
+
+      req.on('error', (error) => {
+        reject(new NetworkError('Failed to connect to Telegram', error, url));
+      });
+
+      req.write(data);
+      req.end();
+    });
+  } catch (error) {
+    throw new MessageError(
+      'Failed to post to Telegram',
+      'telegram',
+      error instanceof Error ? error : new Error(String(error)),
+    );
+  }
+}
+
+/**
+ * Send a message to all configured platforms
+ */
 export default async function sendMessage(
   text: string,
   agent: AtpAgent | undefined,
 ): Promise<void> {
   const logger = await getLogger();
+  const errors: Error[] = [];
 
   // Post to Bluesky
-  if (agent?.session !== undefined) {
-    const rt = new RichText({ text });
-    await rt.detectFacets(agent);
-
-    await agent.post({
-      text: rt.text,
-      facets: rt.facets,
-      langs: ['en', 'ja'],
-    });
+  if (agent) {
+    try {
+      await postToBluesky(text, agent);
+      logger.info('Posted to Bluesky successfully');
+    } catch (error) {
+      if (error instanceof Error) {
+        errors.push(error);
+      }
+    }
   }
 
   // Post to Mastodon
-  if (env.MASTODON_ACCESS_TOKEN !== undefined) {
-    const masto = createRestAPIClient({
-      url: MASTODON_URL,
-      accessToken: env.MASTODON_ACCESS_TOKEN,
-    });
-
-    // Post to Mastodon
-    await masto.v1.statuses.create({
-      status: text,
-      visibility: 'public',
-    });
+  try {
+    await postToMastodon(text);
+    logger.info('Posted to Mastodon successfully');
+  } catch (error) {
+    if (error instanceof Error) {
+      errors.push(error);
+    }
   }
 
-  // Post to Webhook
-  if (env.WEBHOOK_URL !== undefined) {
-    try {
-      const url = new URL(env.WEBHOOK_URL);
-
-      // Setting options for POST data
-      const options = {
-        hostname: url.hostname,
-        path: url.pathname,
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-
-      // Create a request
-      const req = https.request(options, (res) => {
-        let data = '';
-
-        res.on('data', (chunk) => {
-          data += chunk;
-        });
-
-        res.on('end', () => {
-          logger.info(`Webhook status code: ${res.statusCode}`);
-        });
-      });
-
-      req.on('error', (e) => {
-        logger.error(`Error during webhook message send: ${e.message}`);
-      });
-
-      // Data to be sent to Webhook
-      const payload = JSON.stringify({
-        content: text.replace('#evacuate', ''),
-      });
-
-      // Write data to request
-      req.write(payload);
-      req.end();
-
-      logger.info('Message successfully sent to webhook');
-    } catch (webhookError) {
-      logger.error('Error during webhook message send:', webhookError);
+  // Post to Nostr
+  try {
+    await postToNostr(text);
+    logger.info('Posted to Nostr successfully');
+  } catch (error) {
+    if (error instanceof Error) {
+      errors.push(error);
     }
   }
 
   // Post to Slack
-  if (env.SLACK_BOT_TOKEN !== undefined && env.SLACK_CHANNEL_ID !== undefined) {
-    if (!text.includes('Tsunami')) {
-      const attachments = createSlackMessage(text);
-
-      try {
-        await slackClient.chat.postMessage({
-          channel: env.SLACK_CHANNEL_ID,
-          attachments: attachments,
-        });
-        logger.info('Message successfully sent to Slack');
-      } catch (slackError) {
-        logger.error('Error during Slack message send:', slackError);
-      }
+  try {
+    await postToSlack(text);
+    logger.info('Posted to Slack successfully');
+  } catch (error) {
+    if (error instanceof Error) {
+      errors.push(error);
     }
   }
 
-  if (
-    env.TELEGRAM_BOT_TOKEN !== undefined &&
-    env.TELEGRAM_CHAT_ID !== undefined
-  ) {
-    const url = new URL(
-      'sendMessage',
-      `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/`,
-    );
-
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: AbortSignal.timeout(5000),
-        body: JSON.stringify({
-          chat_id: env.TELEGRAM_CHAT_ID,
-          text: text.replace('#evacuate', '').slice(0, 4096),
-        }),
-      });
-      if (response.ok) {
-        logger.info('Message successfully sent to Telegram');
-      } else {
-        const errorData = await response.json();
-        logger.error('Failed to send message to Telegram:', errorData);
-      }
-    } catch (error) {
-      logger.error('Error sending message to Telegram:', error);
+  // Post to Telegram
+  try {
+    await postToTelegram(text);
+    logger.info('Posted to Telegram successfully');
+  } catch (error) {
+    if (error instanceof Error) {
+      errors.push(error);
     }
   }
 
-  if (env.NOSTR_PRIVATE_KEY !== undefined) {
-    try {
-      // Post to Nostr
-      const decodeResult = decode(env.NOSTR_PRIVATE_KEY);
-      const sk = decodeResult.data as Uint8Array;
-      const pk = getPublicKey(sk);
-
-      const event = {
-        kind: 1,
-        created_at: Math.floor(Date.now() / 1000),
-        tags: [],
-        content: text,
-        pubkey: pk,
-      };
-
-      const signedEvent = finalizeEvent(event, sk);
-
-      let successfulRelays = 0;
-
-      // Send a message to each relay
-      for (const relayUrl of NOSTR_RELAYS) {
-        try {
-          const relay = await Relay.connect(relayUrl);
-
-          await relay.connect();
-          await relay.publish(signedEvent);
-          successfulRelays++;
-
-          relay.close();
-        } catch (relayError) {
-          logger.error(
-            `Error during Nostr message send to ${relayUrl}`,
-            relayError,
-          );
-        }
-      }
-
-      logger.info(
-        `Submission was successful for ${successfulRelays} out of ${NOSTR_RELAYS.length} relays`,
-      );
-    } catch (error) {
-      logger.error('Error during Nostr message send:', error);
-    }
+  if (errors.length > 0) {
+    logger.error('Errors occurred while sending messages:', {
+      errors: errors.map((e) => ({
+        name: e.name,
+        message: e.message,
+        stack: e.stack,
+      })),
+    });
   }
 }
