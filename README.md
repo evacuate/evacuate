@@ -13,7 +13,7 @@
 ### Prerequisites
 
 - Node.js (version 20 or higher)
-- yarn (or yarn, although this project prefers yarn)
+- pnpm (version 9 or higher)
 
 ### Installation
 
@@ -32,7 +32,7 @@
 3. Install dependencies:
 
    ```bash
-   yarn install
+   pnpm install
    ```
 
 ### Configuration
@@ -50,19 +50,19 @@
 - **Build**: Compile the TypeScript files to JavaScript
 
   ```bash
-  yarn run build
+  pnpm build
   ```
 
 - **Development**: Run the application in development mode with live reloading
 
   ```bash
-  yarn run dev
+  pnpm dev
   ```
 
 - **Lint Code**: Lint code
 
   ```bash
-  yarn run lint
+  pnpm lint
   ```
 
 ### Usage
@@ -71,7 +71,7 @@
 2. Run the application:
 
    ```bash
-   yarn run start
+   pnpm start
    ```
 
 3. The application will log in to the AT Protocol service and establish a WebSocket connection. It will then listen for earthquake data and post relevant information when an event is detected.

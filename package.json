@@ -23,6 +23,7 @@
     "format": "biome format ./src",
     "format:write": "biome format --write ./src",
     "lint": "biome lint ./src",
+    "preinstall": "npx -y only-allow pnpm",
     "sort": "node scripts/sort.mjs",
     "start": "node dist/index.cjs",
     "test": "vitest",
@@ -53,7 +54,7 @@
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^2.1.8"
   },
-  "packageManager": "yarn@1.22.22",
+  "packageManager": "pnpm@9.15.0",
   "engines": {
     "node": "20.18.x"
   }
