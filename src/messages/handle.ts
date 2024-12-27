@@ -1,4 +1,5 @@
 import type { AtpAgent } from '@atproto/api';
+import env from '~/env';
 import { getLogger } from '~/index';
 import {
   createEarthquakeMessage,
@@ -10,7 +11,6 @@ import parseCode from '~/parsers/code';
 import parsePoints from '~/parsers/points';
 import parseScale from '~/parsers/scale';
 import type { JMAQuake, JMATsunami } from '~/types';
-import env from '~/env';
 
 export async function handleEarthquake(
   earthquakeData: JMAQuake,
