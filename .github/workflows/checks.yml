@@ -23,10 +23,10 @@ jobs:
           node-version: "20.18.x"
 
       - name: Install Dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Run Biome
-        run: npm run lint
+        run: pnpm lint
 
   test:
     name: Test
@@ -45,10 +45,10 @@ jobs:
           node-version: "20.18.x"
 
       - name: Install Dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Run Biome
-        run: npm run test
+        run: pnpm test
 
   scan:
     name: Scan
