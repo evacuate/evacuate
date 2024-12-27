@@ -24,11 +24,15 @@
     "format:write": "biome format --write ./src",
     "lint": "biome lint ./src",
     "preinstall": "npx -y only-allow pnpm",
+    "prepare": "husky",
     "sort": "node scripts/sort.mjs",
     "start": "node dist/index.cjs",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "typecheck": "tsc --noEmit"
+  },
+  "lint-staged": {
+    "*.{js,mjs,ts,mts}": "biome format --write"
   },
   "dependencies": {
     "@atproto/api": "^0.13.20",
@@ -43,12 +47,16 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
     "@hono/node-server": "^1.13.7",
     "@types/node": "^22.10.2",
     "@types/ws": "^8.5.13",
     "dotenv": "^16.4.7",
     "esbuild": "^0.24.0",
     "hono": "^4.6.13",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.11",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vite-tsconfig-paths": "^5.1.4",
