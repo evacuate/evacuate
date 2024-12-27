@@ -1,0 +1,12 @@
+{
+  "name": "main",
+  "build": {
+    "context": "..",
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["biomejs.biome", "EditorConfig.EditorConfig"]
+    }
+  }
+}
