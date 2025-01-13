@@ -16,6 +16,7 @@ export async function handleEarthquake(
   earthquakeData: JMAQuake,
   agent: AtpAgent,
   isDev: boolean,
+  shouldSend: boolean = true,
 ): Promise<void> {
   // Get the logger
   const logger = await getLogger();
@@ -48,8 +49,10 @@ export async function handleEarthquake(
 
     const text = createEarthquakeMessage(time, info, scale, points, isDev);
 
-    await sendMessage(text, agent);
-    logger.info('Earthquake alert received and posted successfully.');
+    if (shouldSend) {
+      await sendMessage(text, agent);
+      logger.info('Earthquake alert received and posted successfully.');
+    }
   } else {
     if (env.ENABLE_LOGGER) {
       logger.warn('Earthquake scale is undefined.');
@@ -61,6 +64,7 @@ export async function handleTsunami(
   tsunamiData: JMATsunami,
   agent: AtpAgent,
   isDev: boolean,
+  shouldSend: boolean = true,
 ): Promise<void> {
   // Get the logger
   const logger = await getLogger();
@@ -73,8 +77,11 @@ export async function handleTsunami(
 
   if (area.length > 0) {
     const text = createTsunamiMessage(time, info, areaResult, isDev);
-    await sendMessage(text, agent);
-    logger.info('Tsunami alert received and posted successfully.');
+
+    if (shouldSend) {
+      await sendMessage(text, agent);
+      logger.info('Tsunami alert received and posted successfully.');
+    }
   } else {
     if (env.ENABLE_LOGGER) {
       logger.warn('Tsunami area is undefined.');
