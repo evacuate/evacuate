@@ -31,7 +31,7 @@ export async function handleEarthquake(
 
   if (scale !== undefined) {
     const minimumScale = env.EARTHQUAKE_MINIMUM_SCALE ?? 0;
-    const numericScale = Number(scale);
+    const numericScale = Number(maxScale);
 
     if (isNaN(numericScale)) {
       logger.warn('Invalid earthquake scale value:', scale);
