@@ -5,10 +5,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const isProductionLogging = process.env.PRODUCTION_LOGGING !== 'false';
-const command = isProductionLogging ? ['node', '-r', 'newrelic', 'dist/index.cjs'] : ['node', 'dist/index.cjs'];
+const command = isProductionLogging
+  ? ['node', '-r', 'newrelic', 'dist/index.cjs']
+  : ['node', 'dist/index.cjs'];
 
 const child = spawn(command[0], command.slice(1), {
-  stdio: 'inherit'
+  stdio: 'inherit',
 });
 
 child.on('error', (error) => {

@@ -1,5 +1,5 @@
-import { build } from 'esbuild';
 import path from 'node:path';
+import { build } from 'esbuild';
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
