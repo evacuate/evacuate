@@ -35,14 +35,14 @@
     "*.{js,mjs,ts,mts}": "biome format --write"
   },
   "dependencies": {
-    "@atproto/api": "^0.13.20",
+    "@atproto/api": "^0.13.31",
     "@evacuate/translate": "^1.3.0",
     "@newrelic/pino-enricher": "^1.1.1",
     "@slack/web-api": "^7.8.0",
-    "masto": "^6.10.1",
-    "newrelic": "^12.8.2",
+    "masto": "^6.10.3",
+    "newrelic": "^12.11.2",
     "nostr-tools": "^2.10.4",
-    "pino": "9.5.0",
+    "pino": "9.6.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {
@@ -50,17 +50,17 @@
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
     "@hono/node-server": "^1.13.7",
-    "@types/node": "^22.10.2",
-    "@types/ws": "^8.5.13",
+    "@types/node": "^22.10.10",
+    "@types/ws": "^8.5.14",
     "dotenv": "^16.4.7",
-    "esbuild": "^0.24.0",
-    "hono": "^4.6.13",
+    "esbuild": "^0.24.2",
+    "hono": "^4.6.18",
     "husky": "^9.1.7",
-    "lint-staged": "^15.2.11",
+    "lint-staged": "^15.4.2",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2",
+    "typescript": "^5.7.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^2.1.8"
+    "vitest": "^3.0.4"
   },
   "packageManager": "pnpm@9.15.0",
   "engines": {
