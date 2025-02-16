@@ -20,7 +20,10 @@ const agent = new AtpAgent({
   service: 'https://bsky.social',
 });
 
-const RECONNECT_DELAY: number = 5000; // 5 seconds
+let reconnectAttempts = 0;
+const BASE_RECONNECT_DELAY = 5000; // 5 seconds
+const MAX_RECONNECT_DELAY = 30000; // Maximum 30 seconds
+
 let isFirstRun = true; // Flag to check if it's the initial run
 
 async function initLogger() {
@@ -143,16 +146,25 @@ async function onClose(code: number, reason: string): Promise<void> {
     reason: reason.toString(),
   });
 
-  // Attempt to reconnect after a delay
+  // Calculate the waiting time by exponential backoff
+  const delay = Math.min(
+    BASE_RECONNECT_DELAY * Math.pow(2, reconnectAttempts),
+    MAX_RECONNECT_DELAY,
+  );
+  logger.info(`Reconnecting in ${delay} ms...`);
   setTimeout(() => {
+    reconnectAttempts++; // Increment the number of reconnection attempts
     logger.info('Attempting to reconnect...');
     void initWebSocket();
-  }, RECONNECT_DELAY);
+  }, delay);
 }
 
 async function onOpen(): Promise<void> {
   const logger = await getLogger();
   logger.info('WebSocket connection opened.');
+
+  // Reset the number of reconnection attempts on successful connection
+  reconnectAttempts = 0;
 }
 
 // Function to check which services are available
