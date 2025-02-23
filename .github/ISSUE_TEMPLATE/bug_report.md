@@ -1,33 +1,18 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report a bug
 title: "bug: "
 labels: bug
 assignees: ""
 ---
 
-### Describe the bug
+### Bug Description
+Briefly describe what happened.
 
-A clear and concise description of what the bug is.
+### Steps to Reproduce
+1. Step 1
+2. Step 2
+3. Step 3
 
-### To Reproduce
-
-Steps to reproduce the behavior:
-
-1. Go to '...'
-2. Click on '....'
-3. See error
-
-### Expected behavior
-
-A clear and concise description of what you expected to happen.
-
-<!-- The following items are not required, if you do not need them, please delete them -->
-
-### Screenshots
-
-If applicable, add screenshots to help explain your problem.
-
-### Additional context
-
-Add any other context about the problem here.
+### Expected Behavior
+Describe what should happen when the bug is fixed.
