@@ -79,9 +79,11 @@ async function initWebSocket(): Promise<void> {
       logger.info(`Now running in ${NODE_ENV} mode.`);
     }
 
-    const url = isDev
-      ? 'wss://api-realtime-sandbox.p2pquake.net/v2/ws'
-      : 'wss://api.p2pquake.net/v2/ws';
+    const url =
+      env.WEBSOCKET_URL ??
+      (isDev
+        ? 'wss://api-realtime-sandbox.p2pquake.net/v2/ws'
+        : 'wss://api.p2pquake.net/v2/ws');
 
     const socket = new WebSocket(url);
 

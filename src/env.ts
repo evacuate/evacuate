@@ -21,6 +21,7 @@ interface Env {
   NODE_ENV?: 'development' | 'production';
   ENABLE_LOGGER: boolean | undefined;
   EARTHQUAKE_MINIMUM_SCALE?: number | undefined;
+  WEBSOCKET_URL?: string | undefined;
 
   BLUESKY_EMAIL?: string | undefined;
   BLUESKY_PASSWORD?: string | undefined;
@@ -43,6 +44,7 @@ const env: Env = {
     ? process.env.ENABLE_LOGGER === 'true'
     : true,
   EARTHQUAKE_MINIMUM_SCALE: getScale(),
+  WEBSOCKET_URL: process.env.WEBSOCKET_URL,
 
   BLUESKY_EMAIL: process.env.BLUESKY_EMAIL,
   BLUESKY_PASSWORD: process.env.BLUESKY_PASSWORD,
