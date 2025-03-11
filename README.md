@@ -1,9 +1,9 @@
 # Evacuate
 
-`evacuate` is a TypeScript application that monitors seismic activity and posts earthquake information to a specified service. The application connects to a WebSocket API to receive earthquake data, processes this information, and posts it with relevant details using the AT Protocol API.
-
 > This is a message from the developer for those who are using or considering deploying this application.
 Please view it [here](https://gist.github.com/minagishl/68a4f9174c266115ffecbd68b33ab6fb).
+
+`evacuate` is a TypeScript application that monitors seismic activity and posts earthquake information to a specified service. The application connects to a WebSocket API to receive earthquake data, processes this information, and posts it with relevant details using the AT Protocol API.
 
 ## Features
 
