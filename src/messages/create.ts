@@ -1,4 +1,7 @@
 import type { MessageAttachment } from '@slack/web-api';
+import env from '~/env';
+import translate from '~/translate';
+import { MessageKey } from '~/types/translate';
 
 const SLACK_MESSAGE_COLOR = '#228BFF';
 
@@ -11,7 +14,9 @@ function createMessageBody(
   const message = [`${time} ${info}`];
 
   if (isDev) {
-    message.push('### This information is a test distribution ###');
+    message.push(
+      translate('message', MessageKey.TEST_DISTRIBUTION, env.LANGUAGE),
+    );
   }
 
   message.push(...body, '#evacuate');
@@ -26,7 +31,11 @@ export function createEarthquakeMessage(
   points: string,
   isDev: boolean,
 ): string {
-  const body = [`Maximum Seismic Intensity ${scale}`, '', `${points}`];
+  const body = [
+    `${translate('message', MessageKey.MAX_SEISMIC_INTENSITY, env.LANGUAGE)} ${scale}`,
+    '',
+    `${points}`,
+  ];
 
   return createMessageBody(time, info, body, isDev);
 }
@@ -38,7 +47,7 @@ export function createTsunamiMessage(
   isDev: boolean,
 ): string {
   const body = [
-    'There is new information in the following areas',
+    translate('message', MessageKey.NEW_INFORMATION, env.LANGUAGE),
     '',
     `${area}`,
   ];
@@ -51,22 +60,25 @@ export function createSlackMessage(text: string): MessageAttachment[] {
     throw new Error('Input text is empty or whitespace');
   }
 
+  const maxSeismicIntensity = translate(
+    'message',
+    MessageKey.MAX_SEISMIC_INTENSITY,
+    env.LANGUAGE,
+  );
   const lines = text.split('\n').filter((line) => line.trim() !== '');
 
   if (lines.length === 0) {
     throw new Error('No valid lines found in input text');
   }
 
-  const maxLine = lines.find((line) =>
-    line.startsWith('Maximum Seismic Intensity'),
-  );
+  const maxLine = lines.find((line) => line.startsWith(maxSeismicIntensity));
 
   if (!maxLine) {
     throw new Error('Maximum Seismic Intensity information not found');
   }
 
   const max = Number.parseInt(
-    maxLine.replace('Maximum Seismic Intensity ', ''),
+    maxLine.replace(`${maxSeismicIntensity} `, ''),
     10,
   );
 
@@ -76,8 +88,15 @@ export function createSlackMessage(text: string): MessageAttachment[] {
 
   const area = new Map<string, string>();
 
+  const seismicIntensityLabel = translate(
+    'message',
+    MessageKey.SEISMIC_INTENSITY,
+    env.LANGUAGE,
+  );
+  const pattern = new RegExp(`\\[${seismicIntensityLabel} (\\d)\\] (.+)`);
+
   for (const line of lines.slice(2)) {
-    const match = line.match(/\[Seismic Intensity (\d)\] (.+)/);
+    const match = line.match(pattern);
     if (match) {
       const intensity = match[1];
       const regions = match[2];
@@ -87,13 +106,13 @@ export function createSlackMessage(text: string): MessageAttachment[] {
 
   const attachments: MessageAttachment[] = [
     {
-      fallback: `${lines[0]}: Maximum Seismic Intensity ${max}`,
+      fallback: `${lines[0]}: ${maxSeismicIntensity} ${max}`,
       color: SLACK_MESSAGE_COLOR,
       title: lines[0],
-      text: `Maximum Seismic Intensity ${max}`,
+      text: `${maxSeismicIntensity} ${max}`,
       fields: [
         ...Array.from(area.entries()).map(([intensity, regions]) => ({
-          title: `Seismic Intensity ${intensity}`,
+          title: `${seismicIntensityLabel} ${intensity}`,
           value: regions,
           short: true,
         })),

@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import { Language } from './types/translate';
 
 // Load environment variables
 dotenv.config();
@@ -22,6 +23,7 @@ interface Env {
   ENABLE_LOGGER: boolean | undefined;
   EARTHQUAKE_MINIMUM_SCALE?: number | undefined;
   WEBSOCKET_URL?: string | undefined;
+  LANGUAGE: Language;
 
   BLUESKY_EMAIL?: string | undefined;
   BLUESKY_PASSWORD?: string | undefined;
@@ -45,6 +47,7 @@ const env: Env = {
     : true,
   EARTHQUAKE_MINIMUM_SCALE: getScale(),
   WEBSOCKET_URL: process.env.WEBSOCKET_URL,
+  LANGUAGE: (process.env.LANGUAGE as Language) || ('en' as Language),
 
   BLUESKY_EMAIL: process.env.BLUESKY_EMAIL,
   BLUESKY_PASSWORD: process.env.BLUESKY_PASSWORD,

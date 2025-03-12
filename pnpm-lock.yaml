@@ -11,9 +11,6 @@ importers:
       '@atproto/api':
         specifier: ^0.14.4
         version: 0.14.4
-      '@evacuate/translate':
-        specifier: ^1.3.0
-        version: 1.3.0
       '@newrelic/pino-enricher':
         specifier: ^1.1.1
         version: 1.1.1(newrelic@12.14.0)
@@ -536,9 +533,6 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
-
-  '@evacuate/translate@1.3.0':
-    resolution: {integrity: sha512-lUx/+XIeRVdnfGIqjcBd/wsxevRl8EQOOaqlCC8Iszn6/6AZ9/KfUPmKThB7/SQ0UfwXTfhIReZvvwdBMvX/qQ==}
 
   '@grpc/grpc-js@1.12.5':
     resolution: {integrity: sha512-d3iiHxdpg5+ZcJ6jnDSOT8Z0O0VMVGy34jAnYLUX8yd36b1qn8f1TwOA/Lc7TsOh03IkPJ38eGI5qD2EjNkoEA==}
@@ -2543,8 +2537,6 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.0':
     optional: true
-
-  '@evacuate/translate@1.3.0': {}
 
   '@grpc/grpc-js@1.12.5':
     dependencies:

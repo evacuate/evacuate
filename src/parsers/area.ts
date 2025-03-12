@@ -1,4 +1,6 @@
-import translate from '@evacuate/translate';
+import env from '~/env';
+import translate from '~/translate';
+import { Prefecture } from '~/types/translate';
 
 interface Area {
   name?: string;
@@ -66,7 +68,9 @@ export default function parseArea(area: Area[]): string[] {
   for (const a of area) {
     for (const pref of prefectureNames) {
       if (a.name?.includes(pref) ?? false) {
-        areaNames.add(translate(pref));
+        areaNames.add(
+          translate('prefecture', pref as Prefecture, env.LANGUAGE),
+        );
         break; // Once found, go to the next `Area`
       }
     }
