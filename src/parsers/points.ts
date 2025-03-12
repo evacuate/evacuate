@@ -1,7 +1,8 @@
 import parseScale from '~/parsers/scale';
 import env from '~/env';
 import translate from '~/translate';
-import { MessageKey, Prefecture } from '~/types/translate';
+import { MessageKey } from '~/types/translate';
+import { prefectureMap } from './area';
 
 interface Point {
   pref: string;
@@ -38,9 +39,13 @@ export default function parsePoints(points: Point[]): string {
       if (!scaleMap.has(scale)) {
         scaleMap.set(scale, new Set());
       }
-      scaleMap
-        .get(scale)
-        ?.add(translate('prefecture', point.pref as Prefecture, env.LANGUAGE));
+      // Look up the Prefecture enum value from the Japanese name
+      const prefEnum = prefectureMap[point.pref];
+      if (prefEnum) {
+        scaleMap
+          .get(scale)
+          ?.add(translate('prefecture', prefEnum, env.LANGUAGE));
+      }
     }
   }
 
