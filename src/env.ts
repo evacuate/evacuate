@@ -8,9 +8,7 @@ const getScale = () => {
   const value = Number(process.env.EARTHQUAKE_MINIMUM_SCALE);
   const validScales = [0, 10, 20, 30, 40, 45, 50, 55, 60, 70];
   if (!validScales.includes(value)) {
-    throw new Error(
-      'EARTHQUAKE_MINIMUM_SCALE must be between 0 and 70 in increments of 10',
-    );
+    return 0;
   }
   return value;
 };
