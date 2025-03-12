@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import { Language } from './types/translate';
 
 // Load environment variables
 dotenv.config();
@@ -7,9 +8,7 @@ const getScale = () => {
   const value = Number(process.env.EARTHQUAKE_MINIMUM_SCALE);
   const validScales = [0, 10, 20, 30, 40, 45, 50, 55, 60, 70];
   if (!validScales.includes(value)) {
-    throw new Error(
-      'EARTHQUAKE_MINIMUM_SCALE must be between 0 and 70 in increments of 10',
-    );
+    return 0;
   }
   return value;
 };
@@ -22,6 +21,7 @@ interface Env {
   ENABLE_LOGGER: boolean | undefined;
   EARTHQUAKE_MINIMUM_SCALE?: number | undefined;
   WEBSOCKET_URL?: string | undefined;
+  LANGUAGE: Language;
 
   BLUESKY_EMAIL?: string | undefined;
   BLUESKY_PASSWORD?: string | undefined;
@@ -45,6 +45,7 @@ const env: Env = {
     : true,
   EARTHQUAKE_MINIMUM_SCALE: getScale(),
   WEBSOCKET_URL: process.env.WEBSOCKET_URL,
+  LANGUAGE: (process.env.LANGUAGE as Language) || ('en' as Language),
 
   BLUESKY_EMAIL: process.env.BLUESKY_EMAIL,
   BLUESKY_PASSWORD: process.env.BLUESKY_PASSWORD,

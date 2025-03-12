@@ -1,5 +1,9 @@
-import translate from '@evacuate/translate';
 import parseScale from '~/parsers/scale';
+import env from '~/env';
+import translate from '~/translate';
+import { MessageKey } from '~/types/translate';
+import { prefectureMap } from './area';
+
 interface Point {
   pref: string;
   scale: number;
@@ -35,7 +39,13 @@ export default function parsePoints(points: Point[]): string {
       if (!scaleMap.has(scale)) {
         scaleMap.set(scale, new Set());
       }
-      scaleMap.get(scale)?.add(translate(point.pref));
+      // Look up the Prefecture enum value from the Japanese name
+      const prefEnum = prefectureMap[point.pref];
+      if (prefEnum) {
+        scaleMap
+          .get(scale)
+          ?.add(translate('prefecture', prefEnum, env.LANGUAGE));
+      }
     }
   }
 
@@ -49,7 +59,7 @@ export default function parsePoints(points: Point[]): string {
     })
     .map(([scale, regionsSet]) => {
       const regions = Array.from(regionsSet).join(', ');
-      return `[Seismic Intensity ${scale}] ${regions}`;
+      return `[${translate('message', MessageKey.SEISMIC_INTENSITY, env.LANGUAGE)} ${scale}] ${regions}`;
     })
     .join('\n');
 
