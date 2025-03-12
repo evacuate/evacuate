@@ -1,6 +1,11 @@
 export enum Language {
   EN = 'en',
   JA = 'ja',
+  KO = 'ko',
+  FR = 'fr',
+  ES = 'es',
+  DE = 'de',
+  IT = 'it',
 }
 
 export enum Code {

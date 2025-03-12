@@ -2,6 +2,11 @@ import { Language, Translations } from '~/types/translate';
 
 import en from './locales/en';
 import ja from './locales/ja';
+import ko from './locales/ko';
+import fr from './locales/fr';
+import es from './locales/es';
+import de from './locales/de';
+import it from './locales/it';
 
 export default function translate<T extends 'code' | 'message' | 'prefecture'>(
   prefix: T,
@@ -15,6 +20,11 @@ export default function translate<T extends 'code' | 'message' | 'prefecture'>(
   const translations: Record<Language, Translations> = {
     [Language.EN]: en,
     [Language.JA]: ja,
+    [Language.KO]: ko,
+    [Language.FR]: fr,
+    [Language.ES]: es,
+    [Language.DE]: de,
+    [Language.IT]: it,
   };
 
   const translationMap = translations[language] || translations[Language.EN];
