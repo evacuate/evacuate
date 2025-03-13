@@ -16,7 +16,6 @@ export default {
     maxSeismicIntensity: '최대 진도',
     seismicIntensity: '진도',
     newInformation: '다음 지역에 새로운 정보가 있습니다',
-    maxIntensityReceived: '{date} {time}에 최대 진도 {scale}이 관측되었습니다.',
   },
   prefecture: {
     hokkaido: '홋카이도',

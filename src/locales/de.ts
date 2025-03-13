@@ -16,8 +16,6 @@ export default {
     maxSeismicIntensity: 'Maximale seismische Intensität',
     seismicIntensity: 'Seismische Intensität',
     newInformation: 'Es gibt neue Informationen für die folgenden Gebiete',
-    maxIntensityReceived:
-      'Eine maximale Intensität von {scale} wurde am {date} um {time} registriert.',
   },
   prefecture: {
     hokkaido: 'Hokkaido',

@@ -24,7 +24,6 @@ export enum MessageKey {
   MAX_SEISMIC_INTENSITY = 'maxSeismicIntensity',
   SEISMIC_INTENSITY = 'seismicIntensity',
   NEW_INFORMATION = 'newInformation',
-  MAX_INTENSITY_RECEIVED = 'maxIntensityReceived',
 }
 
 export enum Prefecture {

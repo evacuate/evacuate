@@ -16,8 +16,6 @@ export default {
     maxSeismicIntensity: '最大震度',
     seismicIntensity: '震度',
     newInformation: '次の地域に新たな情報があります',
-    maxIntensityReceived:
-      '{date} の {time} に最大震度 {scale} が観測されました',
   },
   prefecture: {
     hokkaido: '北海道',
