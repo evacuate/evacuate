@@ -20,7 +20,7 @@ jobs:
       - name: Set Up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20.18.x"
+          node-version: "20.19.x"
 
       - name: Set Up pnpm
         uses: pnpm/action-setup@v4
@@ -47,7 +47,7 @@ jobs:
       - name: Set Up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20.18.x"
+          node-version: "20.19.x"
 
       - name: Set Up pnpm
         uses: pnpm/action-setup@v4
