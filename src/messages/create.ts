@@ -93,7 +93,7 @@ export function createSlackMessage(text: string): MessageAttachment[] {
     MessageKey.SEISMIC_INTENSITY,
     env.LANGUAGE,
   );
-  const pattern = new RegExp(`\\[${seismicIntensityLabel} (\\d)\\] (.+)`);
+  const pattern = new RegExp(`\\[${seismicIntensityLabel} ([^\\]]+)\\] (.+)`);
 
   for (const line of lines.slice(2)) {
     const match = line.match(pattern);
