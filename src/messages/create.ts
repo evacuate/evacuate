@@ -1,5 +1,6 @@
 import type { MessageAttachment } from '@slack/web-api';
 import env from '~/env';
+import { getHashtags } from '~/utils/hashtags';
 import translate from '~/translate';
 import { MessageKey } from '~/types/translate';
 
@@ -19,7 +20,7 @@ function createMessageBody(
     );
   }
 
-  message.push(...body, '#evacuate');
+  message.push(...body, getHashtags().join(' '));
 
   return message.join('\n');
 }

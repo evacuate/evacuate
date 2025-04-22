@@ -14,6 +14,7 @@ const getScale = () => {
 };
 
 interface Env {
+  HASHTAGS?: string | undefined;
   VERSION?: string | undefined;
   PORT?: string | undefined;
   PRODUCTION_LOGGING?: boolean | undefined;
@@ -36,6 +37,7 @@ interface Env {
 }
 
 const env: Env = {
+  HASHTAGS: process.env.HASHTAGS,
   VERSION: process.env.npm_package_version,
   PORT: process.env.PORT,
   PRODUCTION_LOGGING: process.env.PRODUCTION_LOGGING === 'true',

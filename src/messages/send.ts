@@ -7,6 +7,7 @@ import { finalizeEvent, getPublicKey } from 'nostr-tools/pure';
 import { Relay, useWebSocketImplementation } from 'nostr-tools/relay';
 import WebSocket from 'ws';
 import env from '~/env';
+import { getHashtags } from '~/utils/hashtags';
 import { getLogger } from '~/index';
 import { createSlackMessage } from '~/messages/create';
 
@@ -90,7 +91,7 @@ export default async function sendMessage(
 
       // Data to be sent to Webhook
       const payload = JSON.stringify({
-        content: text.replace('#evacuate', ''),
+        content: text.replace(getHashtags().join(' '), '').trim(),
       });
 
       // Write data to request
@@ -140,7 +141,7 @@ export default async function sendMessage(
         signal: AbortSignal.timeout(5000),
         body: JSON.stringify({
           chat_id: env.TELEGRAM_CHAT_ID,
-          text: text.replace('#evacuate', '').slice(0, 4096),
+          text: text.replace(getHashtags().join(' '), '').trim().slice(0, 4096),
         }),
       });
       if (response.ok) {
