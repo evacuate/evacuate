@@ -118,21 +118,36 @@ void (async () => {
 async function onMessage(message: WebSocket.Data): Promise<void> {
   const logger = await getLogger();
   if (isDev) logger.debug('Message received from server.');
-  const earthQuakeData = JSON.parse(message.toString() as string) as
-    | JMAQuake
-    | JMATsunami;
 
-  if (earthQuakeData.code === 551) {
-    handleEarthquake(earthQuakeData as JMAQuake, agent, isDev);
-  } else if (earthQuakeData.code === 552) {
-    handleTsunami(earthQuakeData as JMATsunami, agent, isDev);
-  } else {
-    if (isDev) {
-      logger.warn(
-        'Unknown message code: ',
-        (earthQuakeData as JMAQuake | JMATsunami).code,
+  try {
+    const earthQuakeData = JSON.parse(message.toString() as string) as
+      | JMAQuake
+      | JMATsunami;
+
+    // Parallelize message processing
+    const processPromises = [];
+
+    if (earthQuakeData.code === 551) {
+      processPromises.push(
+        handleEarthquake(earthQuakeData as JMAQuake, agent, isDev),
       );
+    } else if (earthQuakeData.code === 552) {
+      processPromises.push(
+        handleTsunami(earthQuakeData as JMATsunami, agent, isDev),
+      );
+    } else {
+      if (isDev) {
+        logger.warn(
+          'Unknown message code: ',
+          (earthQuakeData as JMAQuake | JMATsunami).code,
+        );
+      }
     }
+
+    // Wait for all parallel processing to complete
+    await Promise.all(processPromises);
+  } catch (error) {
+    logger.error('Error processing message:', error);
   }
 }
 
