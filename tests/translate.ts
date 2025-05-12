@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import translate from '~/translate';
-import { Language, MessageKey, Prefecture } from '~/types/translate';
+import { Language, Prefecture } from '~/types/translate';
 
 test('prefecture - Tokyo translations', ({ expect }) => {
   expect(translate('prefecture', Prefecture.TOKYO, Language.JA)).toBe('東京都');
@@ -15,25 +15,25 @@ test('prefecture - Osaka translations', ({ expect }) => {
 });
 
 test('message - earthquakeInfo translations', ({ expect }) => {
-  expect(translate('message', MessageKey.EARTHQUAKE_INFO, Language.JA)).toBe(
+  expect(translate('message', 'earthquakeInfo', Language.JA)).toBe(
     '地震情報',
   );
-  expect(translate('message', MessageKey.EARTHQUAKE_INFO, Language.EN)).toBe(
+  expect(translate('message', 'earthquakeInfo', Language.EN)).toBe(
     'Earthquake Information',
   );
-  expect(translate('message', MessageKey.EARTHQUAKE_INFO)).toBe(
+  expect(translate('message', 'earthquakeInfo')).toBe(
     'Earthquake Information',
   );
 });
 
 test('message - maxSeismicIntensity translations', ({ expect }) => {
   expect(
-    translate('message', MessageKey.MAX_SEISMIC_INTENSITY, Language.JA),
+    translate('message', 'maxSeismicIntensity', Language.JA),
   ).toBe('最大震度');
   expect(
-    translate('message', MessageKey.MAX_SEISMIC_INTENSITY, Language.EN),
+    translate('message', 'maxSeismicIntensity', Language.EN),
   ).toBe('Maximum Seismic Intensity');
-  expect(translate('message', MessageKey.MAX_SEISMIC_INTENSITY)).toBe(
+  expect(translate('message', 'maxSeismicIntensity')).toBe(
     'Maximum Seismic Intensity',
   );
 });

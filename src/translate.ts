@@ -1,4 +1,4 @@
-import { Language, Translations } from '~/types/translate';
+import { Language, Translations, MessageKeyType } from '~/types/translate';
 
 import en from './locales/en';
 import ja from './locales/ja';
@@ -13,7 +13,7 @@ export default function translate<T extends 'code' | 'message' | 'prefecture'>(
   key: T extends 'code'
     ? keyof Translations['code']
     : T extends 'message'
-      ? keyof Translations['message']
+      ? MessageKeyType
       : keyof Translations['prefecture'],
   language: Language = Language.EN,
 ): string {

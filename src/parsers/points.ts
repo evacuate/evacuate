@@ -1,7 +1,6 @@
 import parseScale from '~/parsers/scale';
 import env from '~/env';
 import translate from '~/translate';
-import { MessageKey } from '~/types/translate';
 import { prefectureMap } from './area';
 
 interface Point {
@@ -59,7 +58,7 @@ export default function parsePoints(points: Point[]): string {
     })
     .map(([scale, regionsSet]) => {
       const regions = Array.from(regionsSet).join(', ');
-      return `[${translate('message', MessageKey.SEISMIC_INTENSITY, env.LANGUAGE)} ${scale}] ${regions}`;
+      return `[${translate('message', 'seismicIntensity', env.LANGUAGE)} ${scale}] ${regions}`;
     })
     .join('\n');
 

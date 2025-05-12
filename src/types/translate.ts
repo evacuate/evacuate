@@ -17,14 +17,13 @@ export enum Code {
   EARTHQUAKE_DETECTION_ANALYSIS_RESULTS = 9611,
 }
 
-export enum MessageKey {
-  TEST_DISTRIBUTION = 'testDistribution',
-  TEST_DISTRIBUTION_SHORT = 'testDistributionShort',
-  EARTHQUAKE_INFO = 'earthquakeInfo',
-  MAX_SEISMIC_INTENSITY = 'maxSeismicIntensity',
-  SEISMIC_INTENSITY = 'seismicIntensity',
-  NEW_INFORMATION = 'newInformation',
-}
+export type MessageKeyType =
+  | 'testDistribution'
+  | 'testDistributionShort'
+  | 'earthquakeInfo'
+  | 'maxSeismicIntensity'
+  | 'seismicIntensity'
+  | 'newInformation';
 
 export enum Prefecture {
   HOKKAIDO = 'hokkaido',
@@ -78,7 +77,7 @@ export enum Prefecture {
 
 export interface Translations {
   code: Record<Code, string>;
-  message: Record<MessageKey, string>;
+  message: Record<MessageKeyType, string>;
   prefecture: Record<Prefecture, string>;
 }
 

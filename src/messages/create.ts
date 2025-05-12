@@ -2,7 +2,6 @@ import type { MessageAttachment } from '@slack/web-api';
 import env from '~/env';
 import { getHashtags } from '~/utils/hashtags';
 import translate from '~/translate';
-import { MessageKey } from '~/types/translate';
 
 const SLACK_MESSAGE_COLOR = '#228BFF';
 
@@ -15,9 +14,7 @@ function createMessageBody(
   const message = [`${time} ${info}`];
 
   if (isDev) {
-    message.push(
-      translate('message', MessageKey.TEST_DISTRIBUTION, env.LANGUAGE),
-    );
+    message.push(translate('message', 'testDistribution', env.LANGUAGE));
   }
 
   message.push(...body, getHashtags().join(' '));
@@ -33,7 +30,7 @@ export function createEarthquakeMessage(
   isDev: boolean,
 ): string {
   const body = [
-    `${translate('message', MessageKey.MAX_SEISMIC_INTENSITY, env.LANGUAGE)} ${scale}`,
+    `${translate('message', 'maxSeismicIntensity', env.LANGUAGE)} ${scale}`,
     '',
     `${points}`,
   ];
@@ -48,7 +45,7 @@ export function createTsunamiMessage(
   isDev: boolean,
 ): string {
   const body = [
-    translate('message', MessageKey.NEW_INFORMATION, env.LANGUAGE),
+    translate('message', 'newInformation', env.LANGUAGE),
     '',
     `${area}`,
   ];
@@ -63,7 +60,7 @@ export function createSlackMessage(text: string): MessageAttachment[] {
 
   const maxSeismicIntensity = translate(
     'message',
-    MessageKey.MAX_SEISMIC_INTENSITY,
+    'maxSeismicIntensity',
     env.LANGUAGE,
   );
   const lines = text.split('\n').filter((line) => line.trim() !== '');
@@ -91,7 +88,7 @@ export function createSlackMessage(text: string): MessageAttachment[] {
 
   const seismicIntensityLabel = translate(
     'message',
-    MessageKey.SEISMIC_INTENSITY,
+    'seismicIntensity',
     env.LANGUAGE,
   );
   const pattern = new RegExp(`\\[${seismicIntensityLabel} ([^\\]]+)\\] (.+)`);
