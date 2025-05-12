@@ -32,7 +32,7 @@ export function createEarthquakeMessage(
   const body = [
     `${translate('message', 'maxSeismicIntensity', env.LANGUAGE)} ${scale}`,
     '',
-    `${points}`,
+    points,
   ];
 
   return createMessageBody(time, info, body, isDev);
@@ -63,8 +63,8 @@ export function createSlackMessage(text: string): MessageAttachment[] {
     'maxSeismicIntensity',
     env.LANGUAGE,
   );
-  const lines = text.split('\n').filter((line) => line.trim() !== '');
 
+  const lines = text.split('\n').filter(Boolean);
   if (lines.length === 0) {
     throw new Error('No valid lines found in input text');
   }
@@ -84,8 +84,6 @@ export function createSlackMessage(text: string): MessageAttachment[] {
     throw new Error('Invalid Maximum Seismic Intensity value');
   }
 
-  const area = new Map<string, string>();
-
   const seismicIntensityLabel = translate(
     'message',
     'seismicIntensity',
@@ -93,30 +91,26 @@ export function createSlackMessage(text: string): MessageAttachment[] {
   );
   const pattern = new RegExp(`\\[${seismicIntensityLabel} ([^\\]]+)\\] (.+)`);
 
+  const area = new Map<string, string>();
   for (const line of lines.slice(2)) {
     const match = line.match(pattern);
     if (match) {
-      const intensity = match[1];
-      const regions = match[2];
+      const [, intensity, regions] = match;
       area.set(intensity, regions);
     }
   }
 
-  const attachments: MessageAttachment[] = [
+  return [
     {
       fallback: `${lines[0]}: ${maxSeismicIntensity} ${max}`,
       color: SLACK_MESSAGE_COLOR,
       title: lines[0],
       text: `${maxSeismicIntensity} ${max}`,
-      fields: [
-        ...Array.from(area.entries()).map(([intensity, regions]) => ({
-          title: `${seismicIntensityLabel} ${intensity}`,
-          value: regions,
-          short: true,
-        })),
-      ],
+      fields: Array.from(area.entries()).map(([intensity, regions]) => ({
+        title: `${seismicIntensityLabel} ${intensity}`,
+        value: regions,
+        short: true,
+      })),
     },
   ];
-
-  return attachments;
 }
