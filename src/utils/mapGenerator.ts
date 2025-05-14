@@ -24,7 +24,7 @@ function mapCoordinates(
   const maxLat = bounds?.maxLat ?? 46.0;
 
   // Add padding to ensure the map is fully visible
-  const paddingPercent = 0.05;
+  const paddingPercent = 0.1;
   const paddingX = width * paddingPercent;
   const paddingY = height * paddingPercent;
 
@@ -32,14 +32,40 @@ function mapCoordinates(
   const effectiveWidth = width - paddingX * 2;
   const effectiveHeight = height - paddingY * 2;
 
-  const aspectRatio = 0.5;
-  const adjustedEffectiveWidth = effectiveWidth * aspectRatio;
+  // Calculate centering offsets to place the map in the center of the canvas
+  const lonRange = maxLon - minLon;
+  const latRange = maxLat - minLat;
 
-  // Calculate position with padding
+  // Use a consistent aspect ratio to prevent distortion
+  const mapAspectRatio = lonRange / latRange;
+  const canvasAspectRatio = effectiveWidth / effectiveHeight;
+
+  let adjustedEffectiveWidth = effectiveWidth;
+  let adjustedEffectiveHeight = effectiveHeight;
+  let extraPaddingX = 0;
+  let extraPaddingY = 0;
+
+  // Adjust the effective dimensions to maintain the proper aspect ratio
+  if (mapAspectRatio > canvasAspectRatio) {
+    // Map is wider than canvas
+    adjustedEffectiveHeight = effectiveWidth / mapAspectRatio;
+    extraPaddingY = (effectiveHeight - adjustedEffectiveHeight) / 2;
+  } else {
+    // Map is taller than canvas
+    adjustedEffectiveWidth = effectiveHeight * mapAspectRatio;
+    extraPaddingX = (effectiveWidth - adjustedEffectiveWidth) / 2;
+  }
+
+  // Calculate position with padding and centering adjustments
   const x =
-    paddingX + ((lon - minLon) / (maxLon - minLon)) * adjustedEffectiveWidth;
+    paddingX +
+    extraPaddingX +
+    ((lon - minLon) / lonRange) * adjustedEffectiveWidth;
   const y =
-    height - paddingY - ((lat - minLat) / (maxLat - minLat)) * effectiveHeight;
+    height -
+    paddingY -
+    extraPaddingY -
+    ((lat - minLat) / latRange) * adjustedEffectiveHeight;
 
   return [x, y];
 }
@@ -288,7 +314,7 @@ function calculateMapBounds(earthquake: JMAQuake): {
     ]);
   }
 
-  // Add points from prefecture data
+  // Add points from all prefectures with reported intensity
   earthquake.points.forEach((point) => {
     const pref = point.pref;
     const prefCoords = PREFECTURE_COORDINATES[pref];
@@ -308,9 +334,9 @@ function calculateMapBounds(earthquake: JMAQuake): {
   minLat = Math.min(...coordinates.map((c) => c[1]));
   maxLat = Math.max(...coordinates.map((c) => c[1]));
 
-  // Add padding to the bounds
-  const lonPadding = (maxLon - minLon) * 0.2;
-  const latPadding = (maxLat - minLat) * 0.2;
+  // Add padding to the bounds to ensure all points are visible with margin
+  const lonPadding = (maxLon - minLon) * 0.3;
+  const latPadding = (maxLat - minLat) * 0.3;
 
   minLon = Math.max(127.0, minLon - lonPadding);
   maxLon = Math.min(146.0, maxLon + lonPadding);
@@ -320,14 +346,14 @@ function calculateMapBounds(earthquake: JMAQuake): {
   // Ensure minimum area size for very close points
   if (maxLon - minLon < 5) {
     const midLon = (maxLon + minLon) / 2;
-    minLon = midLon - 2.5;
-    maxLon = midLon + 2.5;
+    minLon = Math.max(127.0, midLon - 2.5);
+    maxLon = Math.min(146.0, midLon + 2.5);
   }
 
   if (maxLat - minLat < 5) {
     const midLat = (maxLat + minLat) / 2;
-    minLat = midLat - 2.5;
-    maxLat = midLat + 2.5;
+    minLat = Math.max(26.0, midLat - 2.5);
+    maxLat = Math.min(46.0, midLat + 2.5);
   }
 
   return { minLon, maxLon, minLat, maxLat };
