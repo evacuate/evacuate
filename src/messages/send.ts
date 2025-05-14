@@ -28,7 +28,6 @@ const NOSTR_RELAYS = [
 export default async function sendMessage(
   text: string,
   agent: AtpAgent | undefined,
-  imageBuffer: Buffer | null = null,
 ): Promise<void> {
   const logger = await getLogger();
 
@@ -51,20 +50,9 @@ export default async function sendMessage(
       accessToken: env.MASTODON_ACCESS_TOKEN,
     });
 
-    let mediaId = null;
-    if (imageBuffer !== null) {
-      const media = await masto.v1.media.create({
-        file: `data:image/png;base64,${imageBuffer.toString('base64')}`,
-        description: 'Earthquake Map',
-      });
-      mediaId = media.id;
-    }
-
-    // Post to Mastodon with image
     await masto.v1.statuses.create({
       status: text,
       visibility: 'public',
-      mediaIds: mediaId ? [mediaId] : undefined,
     });
   }
 
@@ -127,19 +115,6 @@ export default async function sendMessage(
           channel: env.SLACK_CHANNEL_ID,
           attachments: attachments,
         });
-
-        if (imageBuffer !== null) {
-          await slackClient.filesUploadV2({
-            channel_id: env.SLACK_CHANNEL_ID,
-            file: imageBuffer,
-            title: 'Earthquake Map',
-            filename: 'map.png',
-          });
-        }
-
-        if (env.ENABLE_LOGGER) {
-          logger.info('Message successfully sent to Slack');
-        }
       } catch (slackError) {
         logger.error('Error during Slack message send:', slackError);
       }

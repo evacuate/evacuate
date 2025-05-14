@@ -36,17 +36,10 @@
   "lint-staged": {
     "*.{js,mjs,ts,mts}": "biome format --write"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "canvas"
-    ]
-  },
   "dependencies": {
     "@atproto/api": "^0.15.6",
     "@newrelic/pino-enricher": "^1.1.1",
     "@slack/web-api": "^7.9.1",
-    "canvas": "^3.1.0",
-    "geojson": "^0.5.0",
     "masto": "^7.1.0",
     "newrelic": "^12.18.2",
     "nostr-tools": "^2.13.0",
@@ -58,7 +51,6 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@hono/node-server": "^1.14.1",
-    "@types/geojson": "^7946.0.16",
     "@types/node": "^22.15.17",
     "@types/ws": "^8.18.1",
     "dotenv": "^16.5.0",
