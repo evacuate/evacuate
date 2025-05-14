@@ -10,7 +10,7 @@ const options = {
   format: 'cjs',
   bundle: true,
   minify: true,
-  external: ['newrelic'],
+  external: ['newrelic', 'canvas'],
 };
 
 build(options).catch((err) => {
