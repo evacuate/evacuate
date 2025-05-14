@@ -18,9 +18,9 @@ function mapCoordinates(
   bounds?: { minLon: number; maxLon: number; minLat: number; maxLat: number },
 ): [number, number] {
   // Define the map bounds (Japan)
-  const minLon = bounds?.minLon ?? 122.0;
+  const minLon = bounds?.minLon ?? 127.0;
   const maxLon = bounds?.maxLon ?? 146.0;
-  const minLat = bounds?.minLat ?? 24.0;
+  const minLat = bounds?.minLat ?? 26.0;
   const maxLat = bounds?.maxLat ?? 46.0;
 
   // Add padding to ensure the map is fully visible
@@ -32,8 +32,12 @@ function mapCoordinates(
   const effectiveWidth = width - paddingX * 2;
   const effectiveHeight = height - paddingY * 2;
 
+  const aspectRatio = 0.5;
+  const adjustedEffectiveWidth = effectiveWidth * aspectRatio;
+
   // Calculate position with padding
-  const x = paddingX + ((lon - minLon) / (maxLon - minLon)) * effectiveWidth;
+  const x =
+    paddingX + ((lon - minLon) / (maxLon - minLon)) * adjustedEffectiveWidth;
   const y =
     height - paddingY - ((lat - minLat) / (maxLat - minLat)) * effectiveHeight;
 
@@ -265,9 +269,9 @@ function calculateMapBounds(earthquake: JMAQuake): {
   maxLat: number;
 } {
   // Default bounds for Japan
-  let minLon = 122.0;
+  let minLon = 127.0;
   let maxLon = 146.0;
-  let minLat = 24.0;
+  let minLat = 26.0;
   let maxLat = 46.0;
 
   // Points to track
@@ -308,9 +312,9 @@ function calculateMapBounds(earthquake: JMAQuake): {
   const lonPadding = (maxLon - minLon) * 0.2;
   const latPadding = (maxLat - minLat) * 0.2;
 
-  minLon = Math.max(122.0, minLon - lonPadding);
+  minLon = Math.max(127.0, minLon - lonPadding);
   maxLon = Math.min(146.0, maxLon + lonPadding);
-  minLat = Math.max(24.0, minLat - latPadding);
+  minLat = Math.max(26.0, minLat - latPadding);
   maxLat = Math.min(46.0, maxLat + latPadding);
 
   // Ensure minimum area size for very close points
