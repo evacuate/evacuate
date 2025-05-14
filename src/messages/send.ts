@@ -51,10 +51,20 @@ export default async function sendMessage(
       accessToken: env.MASTODON_ACCESS_TOKEN,
     });
 
-    // Post to Mastodon
+    let mediaId = null;
+    if (imageBuffer !== null) {
+      const media = await masto.v1.media.create({
+        file: `data:image/png;base64,${imageBuffer.toString('base64')}`,
+        description: 'Earthquake Map',
+      });
+      mediaId = media.id;
+    }
+
+    // Post to Mastodon with image
     await masto.v1.statuses.create({
       status: text,
       visibility: 'public',
+      mediaIds: mediaId ? [mediaId] : undefined,
     });
   }
 
