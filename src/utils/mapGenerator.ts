@@ -421,7 +421,11 @@ async function drawGeoJSONMap(
       // Display source
       ctx.fillStyle = '#000000';
       ctx.font = '12px Arial';
-      ctx.fillText('Map data: GeoJSON', 15, height - 15);
+      ctx.fillText(
+        env.MAP_ATTRIBUTION_TEXT || 'Map data: GeoJSON',
+        15,
+        height - 15,
+      );
     } else {
       // If Japan cannot be drawn, fallback
       // Draw simple outline of Japan
