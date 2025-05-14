@@ -49,13 +49,10 @@ export async function handleEarthquake(
     }
 
     // Generate map image if enabled
-    let mapImagePath: string | null = null;
+    let mapImageBuffer: Buffer | null = null;
     if (env.ENABLE_MAP_GENERATION) {
       try {
-        mapImagePath = await generateEarthquakeMap(earthquakeData);
-        if (mapImagePath && env.ENABLE_LOGGER) {
-          logger.info(`Generated earthquake map at: ${mapImagePath}`);
-        }
+        mapImageBuffer = await generateEarthquakeMap(earthquakeData);
       } catch (error) {
         logger.error('Failed to generate earthquake map:', error);
       }
@@ -64,7 +61,7 @@ export async function handleEarthquake(
     const text = createEarthquakeMessage(time, info, scale, points, isDev);
 
     if (shouldSend) {
-      await sendMessage(text, agent, mapImagePath);
+      await sendMessage(text, agent, mapImageBuffer);
       if (env.ENABLE_LOGGER) {
         logger.info('Earthquake alert received and posted successfully.');
       }

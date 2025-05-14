@@ -28,7 +28,7 @@ const NOSTR_RELAYS = [
 export default async function sendMessage(
   text: string,
   agent: AtpAgent | undefined,
-  imageFilePath: string | null = null,
+  imageBuffer: Buffer | null = null,
 ): Promise<void> {
   const logger = await getLogger();
 
@@ -117,6 +117,16 @@ export default async function sendMessage(
           channel: env.SLACK_CHANNEL_ID,
           attachments: attachments,
         });
+
+        if (imageBuffer !== null) {
+          await slackClient.filesUploadV2({
+            channel_id: env.SLACK_CHANNEL_ID,
+            file: imageBuffer,
+            title: 'Earthquake Map',
+            filename: 'map.png',
+          });
+        }
+
         if (env.ENABLE_LOGGER) {
           logger.info('Message successfully sent to Slack');
         }

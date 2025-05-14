@@ -454,7 +454,7 @@ async function drawGeoJSONMap(
 
 export async function generateEarthquakeMap(
   earthquake: JMAQuake,
-): Promise<string | null> {
+): Promise<Buffer | null> {
   try {
     if (!env.ENABLE_MAP_GENERATION) {
       return null;
@@ -570,24 +570,11 @@ export async function generateEarthquakeMap(
       );
     }
 
-    // Ensure output directory exists
-    if (!fs.existsSync(env.MAP_OUTPUT_DIR)) {
-      fs.mkdirSync(env.MAP_OUTPUT_DIR, { recursive: true });
-    }
-
-    // Generate a unique filename based on timestamp
-    const timestamp = Date.now();
-    const earthquakeTime = new Date(earthquake.earthquake.time).getTime();
-    const filename = `earthquake_${earthquakeTime}_${timestamp}.png`;
-    const outputPath = path.join(env.MAP_OUTPUT_DIR, filename);
-
-    // Save the map as an image
+    // Generate the PNG buffer
     const buffer = canvas.toBuffer('image/png');
-    fs.writeFileSync(outputPath, buffer);
+    logger.info('Generated earthquake map buffer');
 
-    logger.info(`Generated earthquake map: ${outputPath}`);
-
-    return outputPath;
+    return buffer;
   } catch (error) {
     const logger = await getLogger();
     logger.error('Error generating earthquake map:', error);
