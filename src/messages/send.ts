@@ -28,6 +28,7 @@ const NOSTR_RELAYS = [
 export default async function sendMessage(
   text: string,
   agent: AtpAgent | undefined,
+  imageFilePath: string | null = null,
 ): Promise<void> {
   const logger = await getLogger();
 

@@ -10,6 +10,7 @@ import parseArea from '~/parsers/area';
 import parseCode from '~/parsers/code';
 import parsePoints from '~/parsers/points';
 import parseScale from '~/parsers/scale';
+import { generateEarthquakeMap } from '~/utils/mapGenerator';
 import type { JMAQuake, JMATsunami } from '~/types';
 
 export async function handleEarthquake(
@@ -47,11 +48,26 @@ export async function handleEarthquake(
       return;
     }
 
+    // Generate map image if enabled
+    let mapImagePath: string | null = null;
+    if (env.ENABLE_MAP_GENERATION) {
+      try {
+        mapImagePath = await generateEarthquakeMap(earthquakeData);
+        if (mapImagePath && env.ENABLE_LOGGER) {
+          logger.info(`Generated earthquake map at: ${mapImagePath}`);
+        }
+      } catch (error) {
+        logger.error('Failed to generate earthquake map:', error);
+      }
+    }
+
     const text = createEarthquakeMessage(time, info, scale, points, isDev);
 
     if (shouldSend) {
-      await sendMessage(text, agent);
-      logger.info('Earthquake alert received and posted successfully.');
+      await sendMessage(text, agent, mapImagePath);
+      if (env.ENABLE_LOGGER) {
+        logger.info('Earthquake alert received and posted successfully.');
+      }
     }
   } else {
     if (env.ENABLE_LOGGER) {

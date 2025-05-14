@@ -10,6 +10,7 @@ Please view it [here](https://gist.github.com/minagishl/68a4f9174c266115ffecbd68
 - Connects to a WebSocket API to receive earthquake data.
 - Processes seismic intensity and event codes.
 - Posts formatted earthquake information to a service using the AT Protocol API.
+- Generates visual maps of Japan showing earthquake locations and intensity levels.
 
 ## Getting Started
 

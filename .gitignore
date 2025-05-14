@@ -12,3 +12,6 @@ dist/
 
 # Environment file
 .env
+
+# Generate Images
+earthquake_images/
