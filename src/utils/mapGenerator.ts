@@ -351,7 +351,20 @@ async function drawGeoJSONMap(
 
     // Identify the epicenter prefecture
     let epicenterPrefCode = 0;
+    // Create a map to store intensity for all affected prefectures
+    const prefIntensityMap: Record<string, number> = {};
+    let epicenterPrefName = '';
 
+    // Only add actual reported prefectures to intensity map
+    if (earthquake?.points) {
+      earthquake.points.forEach((point) => {
+        if (point.scale) {
+          prefIntensityMap[point.pref] = point.scale;
+        }
+      });
+    }
+
+    // Only determine epicenter if there's hypocenter data
     if (earthquake?.earthquake.hypocenter) {
       const { longitude, latitude } = earthquake.earthquake.hypocenter;
       if (longitude !== undefined && latitude !== undefined) {
@@ -373,6 +386,9 @@ async function drawGeoJSONMap(
           },
         );
 
+        // Set epicenter prefecture name
+        epicenterPrefName = closestPref;
+
         // Convert prefecture name to prefecture code
         Object.keys(PREFECTURE_COORDINATES).forEach((name, index) => {
           if (name === closestPref) {
@@ -392,10 +408,15 @@ async function drawGeoJSONMap(
         // Prefecture code or ID
         const properties = feature.properties || {};
         const prefCode = properties.code || properties.id;
+        const prefName = properties.name || properties.nam_ja;
 
-        // If the prefecture is the epicenter, use intensity color, otherwise use default color
-        const isEpicenterPref = prefCode === epicenterPrefCode;
-        const intensity = isEpicenterPref ? maxScale : undefined;
+        // Check if this prefecture has intensity data
+        let intensity: number | undefined = undefined;
+
+        // Check if this prefecture has reported intensity data
+        if (prefName && prefIntensityMap[prefName]) {
+          intensity = prefIntensityMap[prefName];
+        }
 
         if (feature.geometry.type === 'Polygon') {
           drawPolygon(
