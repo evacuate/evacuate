@@ -17,8 +17,7 @@ RUN apt-get update && apt-get install -y \
     libpango1.0-dev \
     libjpeg-dev \
     libgif-dev \
-    librsvg2-dev \
-    && rm -rf /var/lib/apt/lists/*
+    librsvg2-dev
 
 # Create map output directory
 RUN mkdir -p /app/earthquake_images
